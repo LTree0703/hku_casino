@@ -1,0 +1,22 @@
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
+
+# Ignore files with name 'test'
+*test.*
+
+# Ignore all .DS_Store file (a file created by finder, a specific hidden file in MacOS)
+**.DS_Store
+
+# Unignore Makefile
+!Makefile
+
+# Ignore all intermediate files during compilation
+*.o 
+*.s
+*.i
