@@ -1,18 +1,21 @@
 #include <iostream>
 #include <ctime>
+#include <fstream>
+#include <string>
+
+#include "func.h"
+
 using namespace std;
-
-// Functions are declared here
-void clear();
-
 
 int main()
 {
-    printf("hello, world");
     clear();
-}
-
-void clear()
-{
-    cout << "\x1B[2J\x1B[H";
+    string menu_txt;
+    read_file("menu.txt", menu_txt);
+    while (1)
+    {
+        cout << menu_txt;
+        cin.get();
+        clear();
+    }
 }
