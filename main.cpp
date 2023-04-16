@@ -10,11 +10,11 @@ using namespace std;
 int main()
 {
     clear();
-    string menu_txt;
-    read_file("menu.txt", menu_txt);
+    string menu;
+    read_file("menu.txt", menu);
     while (1)
     {
-        cout << menu_txt;
+        cout << menu;
         cin.get();
         clear();
     }
