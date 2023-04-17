@@ -48,6 +48,20 @@ Texas::Texas()
     }
 }
 
+void sort(int rank[7]){
+    int newrank[7];
+    for (int i = 0; i < 7;i++){
+        for (int j = 0; i < 7; i++){
+            if (rank[j] > rank[j + 1]){
+                int temp = rank[j];
+                rank[j] = rank[j + 1];
+                rank[j + 1] = temp;
+            }
+}}}
+
+
+
+
 Card Texas::draw_card()
 {
     /* define card indices:
