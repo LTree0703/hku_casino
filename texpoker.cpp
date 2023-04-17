@@ -150,6 +150,17 @@ void game_init()
 
 }
 
+
+bool isRoyal_flush(string suit[7], int rank[7]);
+bool isStraight_flush(string suit[7], int rank[7]);
+bool isFour_of_a_kind(string suit[7], int rank[7]);
+bool isFullhouse(string suit[7], int rank[7]);
+bool isFlush(string suit[7], int rank[7]);
+bool isStraight(string suit[7], int rank[7]);
+bool isThree_of_a_kind(string suit[7], int rank[7]);
+bool isTwopairs(string suit[7], int rank[7]);
+bool isOnepaie(string suit[7], int rank[7]);
+
 bool game_round()
 {
     int player_turn = 0;
