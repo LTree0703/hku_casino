@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <fstream>
+#include <alogorithm>
 
 // #include "func.h"
 /*Please use g++ -std=c++11 tpoker.cpp -o tpoker to test the program*/
@@ -264,6 +265,8 @@ bool game_round()
 int get_pattern_rank(int suit[7], int rank[7]){
     /*check rank,straight 
     2=2,3=3,...,J=11,Q=12,K=13,A=14;*/
+    
+    sort(rank, rank + 7);
 
     int str_rank = 0;
     for (int a = 2; a > -1; a--){
