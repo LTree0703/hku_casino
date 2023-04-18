@@ -261,8 +261,110 @@ bool game_round()
     return false;
 }
 
-int get_pattern_rank(int suit[7], int rank[7])
-{
-    return 0;
+int get_pattern_rank(int suit[7], int rank[7]){
+    /*check rank,straight 
+    2=2,3=3,...,J=11,Q=12,K=13,A=14;*/
+
+    int str_rank = 0;
+    for (int a = 2; a > -1; a--){
+        int count_rank =0;
+        for (int b = a; b < a + 5; b++){
+        if (rank[b] + 1 == rank[b + 1]){
+            count_rank ++;
+        }}
+        if (count_rank == 4){
+            str_rank = 1;
+            break;
+        }}  
+// check suit, flush
+/* define card indices:
+        0~12 spade
+        13~25 heart
+        26~38 diamond
+        39~51 club*/
+    int S = 0,H = 0,D = 0,C = 0,str_suit = 0;    
+    for (int c = 0; c < 7; c ++){
+        
+        if (suit[c] <= 12){
+            S++;
+        }
+        else if (suit[c] > 12 && suit[c] <= 25){
+            H++;
+        }
+        else if (suit[c] > 25 && suit[c] <= 38){
+            D++;
+        }
+        else{
+            C++;
+        }}      
+    if (S >= 5 || H >= 5 || D >= 5 || C >= 5) {
+        str_suit = 1;
+    }   
+
+    // check the three of a kind,two pair,one pair, fullhouse 
+
+int three_of_a_kind = 0, two_pairs = 0, one_pairs = 0,  Four_of_a_kind = 0;
+for (int d = 0; d < 7; d++) {
+    int count_pattern = 1;
+    for (int e = d + 1; e < 7; e++) {
+        if (rank[d] == rank[e] && d != e && (rank[d] != -1 || rank[e] != -1)) {
+            count_pattern++;
+            rank[e] = -1;
+        } 
+
+
+
+
+    }
+    if (count_pattern == 2) {
+        one_pairs++; }
+    else if (count_pattern == 3 ) {
+            three_of_a_kind++;}  
+    else if (count_pattern == 4) {
+        Four_of_a_kind++;
+    }
+
+}  
+
+
+
+
+
+    
+    
+    if (str_suit == 1 && str_rank == 1){
+        cout << "Straight Flush !" << endl;
+        return 8;        
+    }
+    else if (Four_of_a_kind >= 1){
+        cout << "Four of a Kind !" << endl;
+        return 7; }
+
+    else if ((one_pairs > 0 && three_of_a_kind > 0) || three_of_a_kind == 2){
+        cout << "Full House !" << endl;
+        return 6;}
+
+    else if (str_suit ==1 && str_rank != 1){
+        cout << "Flush !" << endl;
+        return 5;
+    }
+    else if (str_suit != 1 && str_rank == 1){
+        cout << "Straight !" << endl;
+        return 4;}
+
+    else if (three_of_a_kind == 1 && one_pairs == 0){
+        cout << "Three of a Kind !" << endl;
+        return 3;}    
+
+    else if (one_pairs >= 2 && three_of_a_kind == 0 ){
+        cout << "Two Pairs !" << endl;
+        return 2;} 
+
+    else if (one_pairs == 1 && three_of_a_kind == 0){
+        cout << "One Pairs !" << endl;
+        return 1;}    
+    else {
+        cout << "No Special Pattern !";
+        return 0;}
 }
 
