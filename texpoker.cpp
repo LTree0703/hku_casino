@@ -22,7 +22,14 @@ void read_file(string filename, string &text) // read the file and store it in a
     }
 }
 
+void clear() // clear console output
+{
+    cout << "\x1B[2J\x1B[H";
+}
+
 struct Card {
+    int suitidx;
+    int rankidx;
     string suit;
     string rank;
 };
@@ -39,6 +46,7 @@ public:
     Texas();
     Card draw_card();
     void print_table();
+    Player get_winner();
 
 private:
     int phase; // 0 = start; 1 = fold; 2 = turn; 3 = river
@@ -79,9 +87,11 @@ Card Texas::draw_card()
         idx = rand() % CARD_NUM;
     }
     cards[idx] = 1;
-
        
-    switch (idx / 13)
+    c.suitidx = idx / 13;
+    c.rankidx = idx % 13 + 2;
+
+    switch (idx / 13) /*suit*/
     {
         case 0:
             c.suit = "♠"; // spade
@@ -97,58 +107,101 @@ Card Texas::draw_card()
             break;
     }
 
-    switch (idx % 13)
+    switch (idx % 13) /*rank*/
     {
+        case 8:
+            c.rank = "10";
+            break;
         case 9:
-            c.rank = "J"; // jack
+            c.rank = "J "; // jack
             break;
         case 10:
-            c.rank = "Q"; // queen
+            c.rank = "Q "; // queen
             break;
         case 11:
-            c.rank = "K"; // king
+            c.rank = "K "; // king
             break;
         case 12:
-            c.rank = "A"; // ace
+            c.rank = "A "; // ace
             break;
         default:
-            c.rank = to_string((idx+2) % 13);
+            c.rank = to_string((idx+2) % 13) + " ";
             break;
     }
     return c;
 }
 
+string detect10(string rank)
+{
+    if (rank != "10")
+    {
+        rank = " " + rank.erase(1);
+    }
+    return rank;
+}
+
 void Texas::print_table()
 {
     // TODO: access chips, player hole cards and community cards and print on terminal
-    // ♠ ♥ ♣ ♦
 
     // TODO: render community cards
 
 
 
     // render hole cards
-    // TODO: what if c.rank == "10"?
     cout << "You got:" << endl;
     Card c1 = players[0].hole_card[0];
     Card c2 = players[1].hole_card[1];
+    cout << c1.rankidx << " " << c1.suitidx << " " << c2.rankidx << " " << c2.suitidx << endl;
     printf(".-------.    .-------.\n");
-    printf("|%s      |    |%s      |\n", c1.rank.c_str(), c2.rank.c_str());
+    printf("|%s     |    |%s     |\n", c1.rank.c_str(), c2.rank.c_str());
     printf("|       |    |       |\n");
     printf("|   %s   |    |   %s   |\n", c1.suit.c_str(), c2.suit.c_str());
     printf("|       |    |       |\n");
-    printf("|      %s|    |      %s|\n", c1.rank.c_str(), c2.rank.c_str());
+    printf("|     %s|    |     %s|\n", detect10(c1.rank).c_str(), detect10(c2.rank).c_str()); // cater with the situation where card rank = "10"
     printf("`-------'    `-------'\n");
+}
 
+int get_pattern_rank(int suit[7], int rank[7]);
+
+Player Texas::get_winner()
+{
+    int highest_rank_player = -1;
+    int highest_rank = 0;
+    int *rank = new int[7];
+    int *suit = new int[7];
+    // store the data from the community cards
+    for (int i = 0; i < 5; i++)
+    {
+        rank[i] = community_cards[i].rankidx;
+        suit[i] = community_cards[i].suitidx;
+    }
+
+    for (int i = 0; i < PLAYER_NUM; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            rank[5+j] = players[i].hole_card[j].rankidx;
+            suit[5+j] = players[i].hole_card[j].suitidx;
+        }
+
+        int current_rank = get_pattern_rank(suit, rank);
+        if (current_rank > highest_rank)
+        {
+            highest_rank = current_rank;
+            highest_rank_player = i;
+        }
+        else if (current_rank == highest_rank)
+        {
+            // TODO: declare another function here  
+        }
+    }
+    return players[highest_rank_player];
 }
 
 void game_init();
 bool game_round();
 
-void clear() // clear console output
-{
-    cout << "\x1B[2J\x1B[H";
-}
 int main()
 {
     game_init();
@@ -185,7 +238,6 @@ void game_init()
             round_count++;
         }
     }   
-
 }
 
 bool game_round()
@@ -194,9 +246,6 @@ bool game_round()
     Texas dealer;
     cout << "Shuffling the cards and dealing..." << endl;
     sleep(1);
-    dealer.draw_card();
-
-    // TODO: print out the table
     dealer.print_table();
     // TODO: flop: rand three community cards + ask for input
 
@@ -204,11 +253,16 @@ bool game_round()
 
     // TODO: river: rand one community card + ask for input
 
-    // TODO: compare the rank of the players who doesn't fold -> Paul
-
+    // TODO: compare the rank of the players who doesn't fold
+    dealer.get_winner();
     // TODO: break if the player chose fold
 
     // TODO: ask for command 
     return false;
+}
+
+int get_pattern_rank(int suit[7], int rank[7])
+{
+    return 0;
 }
 
