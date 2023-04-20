@@ -12,16 +12,6 @@ using namespace std;
 #define CARD_NUM 52
 #define PLAYER_NUM 5
 
-void read_file(string filename, string &text) // read the file and store it in a string
-{
-    ifstream file(filename);
-    string line;
-    while (getline(file, line))
-    {
-        text += line + "\n";
-    }
-}
-
 void clear() // clear console output
 {
     cout << "\x1B[2J\x1B[H";
@@ -45,34 +35,28 @@ class Texas {
 public:
     Texas();
     Card draw_card();
-    void print_table();
-    void bet();
-    void flop();
-    void turn();
-    void river();
-    Player get_winner();
-    void end_round();
-    int phase; // 0 = start; 1 = fold; 2 = turn; 3 = river
+    void print_table(int phase);
+    int bet(string choice, int playeridx); // returns an integer indicating the minimum number of chip required for call
+    void game_flow();
+    int get_winner(); // returns an integer indicating the index of the winner in the array players[]
 
 private:
-    int *cards;
+    int cards[CARD_NUM];
     int pot;
-    Card *community_cards;
-    Player *players;
+    Card community_cards[PLAYER_NUM];
+    Player players[PLAYER_NUM];
 };
 
 Texas::Texas()
 {
-    phase = 0;
     pot = 0;
-    cards = new int[CARD_NUM];
-    community_cards = new Card[5];
-    players = new Player[PLAYER_NUM];
 
     // initialize the card deck: 0 = not drawn; 1 = drawn
     fill(cards, cards+CARD_NUM, 0);
+
     for (int i = 0; i < PLAYER_NUM; i++)
     {
+        players[i].name = "Player " + to_string(i);
         players[i].chips = rand() % 50 + 20;
         players[i].hasFolded = false;
         players[i].hole_card[0] = draw_card();
@@ -103,16 +87,16 @@ Card Texas::draw_card()
     switch (idx / 13) /*suit*/
     {
         case 0:
-            c.suit = "♠"; // spade
+            c.suit = "\033[2m♠\033[0m"; // spade
             break;
         case 1:
-            c.suit = "♥"; // heart
+            c.suit = "\033[31m♥\033[0m"; // heart
             break;
         case 2:
-            c.suit = "♣"; // club
+            c.suit = "\033[2m♣\033[0m"; // club
             break;
         case 3:
-            c.suit = "♦"; // diamond
+            c.suit = "\033[31m♦\033[0m"; // diamond
             break;
     }
 
@@ -149,13 +133,8 @@ string detect10(string rank)
     return rank;
 }
 
-void Texas::print_table()
+void Texas::print_table(int phase)
 {
-    if (players->hasFolded)
-    {
-        return;
-    }
-
     printf("  ______________________________________________\n");
     printf(" /                                              \\\n");
     printf("/                  Pot = %d chips                 \\\n", pot);   
@@ -180,17 +159,13 @@ void Texas::print_table()
         else
             cout << players[i].name << " got:" << endl;
 
-        Card *c1 = new Card;
-        Card *c2 = new Card;
-        c1 = &players[i].hole_card[0];
-        c2 = &players[i].hole_card[1];
+        Card c1 = players[i].hole_card[0];
+        Card c2 = players[i].hole_card[1];
         printf(".-----.    .-----.\n");
-        printf("|%s   |    |%s   |\n", c1->rank.c_str(), c2->rank.c_str());
-        printf("|  %s  |    |  %s  |\n", c1->suit.c_str(), c2->suit.c_str());
-        printf("|   %s|    |   %s|\n", detect10(c1->rank).c_str(), detect10(c2->rank).c_str()); // cater with the situation where card rank = "10"
+        printf("|%s   |    |%s   |\n", c1.rank.c_str(), c2.rank.c_str());
+        printf("|  %s  |    |  %s  |\n", c1.suit.c_str(), c2.suit.c_str());
+        printf("|   %s|    |   %s|\n", detect10(c1.rank).c_str(), detect10(c2.rank).c_str()); // cater with the situation where card rank = "10"
         printf("`-----'    `-----'\n");
-        c1 = NULL; c2 = NULL;
-        delete c1; delete c2;
         if (phase != 3)
         {
             break;
@@ -198,82 +173,115 @@ void Texas::print_table()
     }
 }
 
-void Texas::bet()
+int Texas::bet(string choice, int playeridx)
 {
-    string choice;
-    cout << "(1) call" << endl;
-    cout << "(2) raise" << endl;
-    cout << "(3) check" << endl;
-    cout << "(4) fold" << endl;
-    cout << "(5) all-in" << endl;
-    cout << "Choose your bet: ";
-    cin >> choice;
-    
     // TODO: implement actions after choice
-    if (choice == "1")
+    if (choice == "1") // call
     {
 
     }
-    else if (choice == "2")
+    else if (choice == "2")  // raise
     {
 
     }
-    else if (choice == "3")
+    else if (choice == "3")  // check
     {
 
     }
-    else if (choice == "4")
+    else if (choice == "4") // fold
     {
-
+        cout << "You have chosen to fold, skipping the remaining rounds..." << endl;
+        sleep(1);
+        players[playeridx].hasFolded = true;
     }
-    else if (choice == "5")
+    else if (choice == "5") // all-in
     {
-
+        pot += players[playeridx].chips;
+        players[playeridx].chips = 0;
     }
     else
     {
-        cout << "Invalid input. Please try again:(";
-        cin.get();
-        bet();
+        cout << "Invalid input. Please try again:(" << endl;
+        sleep(1);
+        cout << "Choose your bet: ";
+        cin >> choice;
+        return bet(choice, playeridx);
     }
 }
 
-void Texas::flop()
+void Texas::game_flow()
 {
-    cout << "Round: FLOP" << endl;
-    for (int i = 0; i < 3; i++)
+    int phase;
+    for (phase = 0; phase < 3; phase++)
     {
-        community_cards[i] = draw_card();
+        switch (phase)
+        {
+            case 0: // flop
+                cout << "Round: FLOP" << endl;
+                community_cards[0] = draw_card();
+                community_cards[1] = draw_card();
+                community_cards[2] = draw_card();
+                break;
+            case 1: // turn
+                cout << "Round: TURN" << endl;
+                community_cards[3] = draw_card();
+                break;
+            case 2: // river
+                cout << "Round: RIVER" << endl;
+                community_cards[4] = draw_card();
+                break;
+        }
+        int minimum_bet;
+        if (!players[0].hasFolded)
+        {
+            print_table(phase);
+
+            // player input bet
+            string choice;
+            cout << "(1) call" << endl;
+            cout << "(2) raise" << endl;
+            cout << "(3) check" << endl;
+            cout << "(4) fold" << endl;
+            cout << "(5) all-in" << endl;
+            cout << "Choose your bet: ";
+            cin >> choice;     
+            minimum_bet = bet(choice, 0);
+        }
+
+        // NPC automatic bet
+        for (int i = 1; i < PLAYER_NUM; i++)
+        {
+            if (players[i].hasFolded)
+            {
+                continue;
+            }
+            else if (players[i].chips >= minimum_bet)
+            {
+                minimum_bet = bet("1", i);
+            }
+            else 
+            {
+                players[i].hasFolded = true;
+            }
+            
+        }
+
+        clear();
     }
-    print_table();
-    bet();
-    clear();
-    phase++;
-}
 
-void Texas::turn()
-{
-    cout << "Round: TURN" << endl;
-    community_cards[3] = draw_card();
-    print_table();
-    bet();
-    clear();
-    phase++;
-}
+    int winner = get_winner();
 
-void Texas::river()
-{
-    cout << "Round: RIVER" << endl;
-    community_cards[4] = draw_card();
-    print_table();
-    bet();
-    clear();
-    phase++;
+    cout << "RESULT" << endl;
+    print_table(phase);
+    cout << "So the winner of this round is: " << players[winner].name << "!" << endl;
+    sleep(1);
+    cout << players[winner].name << " + " << pot << " chips" << endl;
+    players[winner].chips += pot;
 }
 
 int get_pattern_rank(int suit[7], int rank[7]);
 
-Player Texas::get_winner()
+int Texas::get_winner()
 {
     int highest_rank_player = -1;
     int highest_rank = 0;
@@ -305,14 +313,8 @@ Player Texas::get_winner()
             // TODO: declare another function here  
         }
     }
-    return players[highest_rank_player];
-}
-
-void Texas::end_round()
-{
-    cout << "RESULT" << endl;
-    print_table();
-    cout << "So the winner of this round is: " << get_winner().name << endl;
+    delete[] rank; delete[] suit;
+    return highest_rank_player;
 }
 
 void game_init();
@@ -330,7 +332,6 @@ void game_init()
     // set seed value for generating random numbers
     srand((unsigned) time(NULL));
     
-    cout << "♦" << endl;
     cout << R"( _____                       ___      _             )" << endl;
     cout << R"(/__   \_____  ____ _ ___    / _ \___ | | _____ _ __ )" << endl;
     cout << R"(  / /\/ _ \ \/ / _` / __|  / /_)/ _ \| |/ / _ \ '__|)" << endl;
@@ -358,17 +359,14 @@ void game_init()
 
 bool game_round()
 {
-    int player_turn = 0;
-    Texas dealer;
+    Texas *dealer = new Texas;
     cout << "Shuffling the cards and dealing..." << endl;
     sleep(1);
-    dealer.flop();
-    dealer.turn();
-    dealer.river();
-    dealer.end_round();
 
+    dealer->game_flow();
+
+    delete dealer;
     string choice;
-
     cout << "Continue playing? (Y/N) ";
     while (1)
     {
