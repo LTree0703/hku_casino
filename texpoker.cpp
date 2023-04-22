@@ -278,7 +278,8 @@ void Texas::game_flow()
             }
             else if (players[i].chips >= minimum_bet)
             {
-                players[i].chips += minimum_bet;
+                players[i].chips -= minimum_bet;
+                pot += minimum_bet;
             }
             else 
             {
