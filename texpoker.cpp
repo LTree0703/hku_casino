@@ -36,7 +36,7 @@ public:
     Texas();
     Card draw_card();
     void print_table(int phase);
-    int bet(string choice, int playeridx); // returns an integer indicating the minimum number of chip required for call
+    void bet(string choice, int playeridx, int &bet); // returns an integer indicating the minimum number of chip required for call
     void game_flow();
     int get_winner(); // returns an integer indicating the index of the winner in the array players[]
 
@@ -135,6 +135,8 @@ string detect10(string rank)
 
 void Texas::print_table(int phase)
 {
+    // TODO: access players' chips and print on console
+    
     printf("  ______________________________________________\n");
     printf(" /                                              \\\n");
     printf("/                  Pot = %d chips                 \\\n", pot);   
@@ -173,24 +175,41 @@ void Texas::print_table(int phase)
     }
 }
 
-int Texas::bet(string choice, int playeridx)
+void Texas::bet(string choice, int playeridx, int &minimum_bet)
 {
-    // TODO: implement actions after choice
-    if (choice == "1") // call
+    if (choice == "1" && players[playeridx].chips > minimum_bet) // call
     {
-
+        cout << "You chose to put " << minimum_bet << " chips!" << endl;
+        players[playeridx].chips -= minimum_bet;
+        pot += minimum_bet;
     }
-    else if (choice == "2")  // raise
+    else if (choice == "2" && players[playeridx].chips > minimum_bet)  // raise
     {
+        int raise = 0;
+        cout << "How many chips would you like to raise?" << endl;
+        while (1)
+        {
+            cin >> raise;
+            if (players[playeridx].chips < raise)
+                cout << "You don't have enough chips:(" << endl;
+            else if (raise <= minimum_bet)
+                cout << "The amount of raise cannot be less than the original amount!" << endl;
+            else
+                break;
+        }
+        cout << "You chose to put " << raise << " chips!" << endl;
+        minimum_bet = raise;
+        players[playeridx].chips -= raise;
+        pot += raise;
 
     }
     else if (choice == "3")  // check
     {
-
+        cout << "You chose to check, skipping this round..." << endl;
     }
     else if (choice == "4") // fold
     {
-        cout << "You have chosen to fold, skipping the remaining rounds..." << endl;
+        cout << "You have chosen fold, skipping the remaining rounds..." << endl;
         sleep(1);
         players[playeridx].hasFolded = true;
     }
@@ -205,7 +224,7 @@ int Texas::bet(string choice, int playeridx)
         sleep(1);
         cout << "Choose your bet: ";
         cin >> choice;
-        return bet(choice, playeridx);
+        bet(choice, playeridx, minimum_bet);
     }
 }
 
@@ -231,7 +250,7 @@ void Texas::game_flow()
                 community_cards[4] = draw_card();
                 break;
         }
-        int minimum_bet;
+        int minimum_bet = 1;
         if (!players[0].hasFolded)
         {
             print_table(phase);
@@ -243,9 +262,11 @@ void Texas::game_flow()
             cout << "(3) check" << endl;
             cout << "(4) fold" << endl;
             cout << "(5) all-in" << endl;
-            cout << "Choose your bet: ";
-            cin >> choice;     
-            minimum_bet = bet(choice, 0);
+            cout << "Choose your bet: (You have " << players[0].chips << " chips) ";
+            cin >> choice; 
+            bet(choice, 0, minimum_bet);
+            cout << "Heading to another round..." << endl;
+            sleep(1);
         }
 
         // NPC automatic bet
@@ -257,13 +278,12 @@ void Texas::game_flow()
             }
             else if (players[i].chips >= minimum_bet)
             {
-                minimum_bet = bet("1", i);
+                players[i].chips += minimum_bet;
             }
             else 
             {
                 players[i].hasFolded = true;
             }
-            
         }
 
         clear();
