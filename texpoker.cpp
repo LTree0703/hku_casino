@@ -3,25 +3,14 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <fstream>
-#include <alogorithm>
+#include <algorithm>
 
 // #include "func.h"
-/*Please use g++ -std=c++11 tpoker.cpp -o tpoker to test the program*/
 
 using namespace std;
 
 #define CARD_NUM 52
 #define PLAYER_NUM 5
-
-void read_file(string filename, string &text) // read the file and store it in a string
-{
-    ifstream file(filename);
-    string line;
-    while (getline(file, line))
-    {
-        text += line + "\n";
-    }
-}
 
 void clear() // clear console output
 {
@@ -38,7 +27,7 @@ struct Card {
 struct Player {
     string name;
     int chips;
-    bool hasFolded;
+    bool hasFolded = false;
     Card hole_card[2];
 };
 
@@ -46,31 +35,34 @@ class Texas {
 public:
     Texas();
     Card draw_card();
-    void print_table();
-    Player get_winner();
+    void print_table(int phase);
+    void bet(string choice, int playeridx, int &bet); // returns an integer indicating the minimum number of chip required for call
+    void game_flow();
+    int get_winner(); // returns an integer indicating the index of the winner in the array players[]
 
 private:
-    int phase; // 0 = start; 1 = fold; 2 = turn; 3 = river
-    Card *community_cards;
-    Player *players;
     int cards[CARD_NUM];
+    int pot;
+    Card community_cards[PLAYER_NUM];
+    Player players[PLAYER_NUM];
 };
 
 Texas::Texas()
 {
-    phase = 0;
-    community_cards = new Card[5];
-    players = new Player[CARD_NUM];
+    pot = 0;
 
     // initialize the card deck: 0 = not drawn; 1 = drawn
     fill(cards, cards+CARD_NUM, 0);
+
     for (int i = 0; i < PLAYER_NUM; i++)
     {
+        players[i].name = "Player " + to_string(i);
         players[i].chips = rand() % 50 + 20;
         players[i].hasFolded = false;
         players[i].hole_card[0] = draw_card();
         players[i].hole_card[1] = draw_card();
-        community_cards[i] = draw_card();
+        community_cards[i].rank = "# ";
+        community_cards[i].suit = "#";
     }
 }
 
@@ -95,16 +87,16 @@ Card Texas::draw_card()
     switch (idx / 13) /*suit*/
     {
         case 0:
-            c.suit = "♠"; // spade
+            c.suit = "\033[2m♠\033[0m"; // spade
             break;
         case 1:
-            c.suit = "♥"; // heart
+            c.suit = "\033[31m♥\033[0m"; // heart
             break;
         case 2:
-            c.suit = "♣"; // club
+            c.suit = "\033[2m♣\033[0m"; // club
             break;
         case 3:
-            c.suit = "♦"; // diamond
+            c.suit = "\033[31m♦\033[0m"; // diamond
             break;
     }
 
@@ -141,31 +133,318 @@ string detect10(string rank)
     return rank;
 }
 
-void Texas::print_table()
+string format(int pot)
 {
-    // TODO: access chips, player hole cards and community cards and print on terminal
+    if (pot < 10)
+        return "  " + to_string(pot);
+    else if (pot >= 100)
+        return to_string(pot);
+    else
+        return " " + to_string(pot);
 
-    // TODO: render community cards
-
-
-
-    // render hole cards
-    cout << "You got:" << endl;
-    Card c1 = players[0].hole_card[0];
-    Card c2 = players[1].hole_card[1];
-    cout << c1.rankidx << " " << c1.suitidx << " " << c2.rankidx << " " << c2.suitidx << endl;
-    printf(".-------.    .-------.\n");
-    printf("|%s     |    |%s     |\n", c1.rank.c_str(), c2.rank.c_str());
-    printf("|       |    |       |\n");
-    printf("|   %s   |    |   %s   |\n", c1.suit.c_str(), c2.suit.c_str());
-    printf("|       |    |       |\n");
-    printf("|     %s|    |     %s|\n", detect10(c1.rank).c_str(), detect10(c2.rank).c_str()); // cater with the situation where card rank = "10"
-    printf("`-------'    `-------'\n");
 }
 
-int get_pattern_rank(int suit[7], int rank[7]);
+void Texas::print_table(int phase)
+{
+    // access players' chips and print on console
+    cout << endl << "Number of chips: " << endl;
+    for (int i = 0; i < PLAYER_NUM; i++)
+    {
+        printf("%s: %d chips\n", players[i].name.c_str(), players[i].chips);
+    }
 
-Player Texas::get_winner()
+    // print the table of community cards on console
+    printf("  ______________________________________________\n");
+    printf(" /                                              \\\n");
+    printf("/                  Pot = %s chips               \\\n", format(pot).c_str());   
+    printf("|    .-----.  .-----. .-----. .-----. .-----.    |\n");
+    printf("|    |%s   |  |%s   | |%s   | |%s   | |%s   |    |\n", community_cards[0].rank.c_str(), community_cards[1].rank.c_str(), community_cards[2].rank.c_str(), community_cards[3].rank.c_str(), community_cards[4].rank.c_str());
+    printf("|    |  %s  |  |  %s  | |  %s  | |  %s  | |  %s  |    |\n", community_cards[0].suit.c_str(), community_cards[1].suit.c_str(), community_cards[2].suit.c_str(), community_cards[3].suit.c_str(), community_cards[4].suit.c_str());
+    printf("|    |   %s|  |   %s| |   %s| |   %s| |   %s|    |\n", detect10(community_cards[0].rank).c_str(), detect10(community_cards[1].rank).c_str(), detect10(community_cards[2].rank).c_str(), detect10(community_cards[3].rank).c_str(), detect10(community_cards[4].rank).c_str());
+    printf("|    `-----'  `-----' `-----' `-----' `-----'    |\n");
+    printf("\\                                                /\n");
+    printf(" \\______________________________________________/\n");
+    printf("\n");
+
+    // render hole card
+    for (int i = 0; i < PLAYER_NUM; i++)
+    {
+        if (i == 0 && players[i].hasFolded)
+            cout << "You got: (folded)" << endl;
+        else if (i == 0)
+            cout << "You got: " << endl;
+        else if (players[i].hasFolded)
+            cout << players[i].name << " got: (folded)" << endl;
+        else
+            cout << players[i].name << " got:" << endl;
+
+        Card c1 = players[i].hole_card[0];
+        Card c2 = players[i].hole_card[1];
+        printf(".-----.    .-----.\n");
+        printf("|%s   |    |%s   |\n", c1.rank.c_str(), c2.rank.c_str());
+        printf("|  %s  |    |  %s  |\n", c1.suit.c_str(), c2.suit.c_str());
+        printf("|   %s|    |   %s|\n", detect10(c1.rank).c_str(), detect10(c2.rank).c_str()); // cater with the situation where card rank = "10"
+        printf("`-----'    `-----'\n");
+        if (phase != 3) // only print other players' hole cards after round river
+        {
+            break;
+        }
+    }
+}
+
+void Texas::bet(string choice, int playeridx, int &minimum_bet)
+{
+    if (choice == "1" && players[playeridx].chips > minimum_bet) // call
+    {
+        cout << "You chose to put " << minimum_bet << " chips!" << endl;
+        players[playeridx].chips -= minimum_bet;
+        pot += minimum_bet;
+    }
+    else if (choice == "2" && players[playeridx].chips > minimum_bet)  // raise
+    {
+        int raise = 0;
+        cout << "How many chips would you like to raise?" << endl;
+        while (1)
+        {
+            cin >> raise;
+            if (players[playeridx].chips < raise)
+                cout << "You don't have enough chips:(" << endl;
+            else if (raise <= minimum_bet)
+                cout << "The amount of raise cannot be less than the original amount!" << endl;
+            else
+                break;
+        }
+        cout << "You chose to put " << raise << " chips!" << endl;
+        minimum_bet = raise;
+        players[playeridx].chips -= raise;
+        pot += raise;
+
+    }
+    else if (choice == "3")  // check
+    {
+        cout << "You chose to check, skipping this round..." << endl;
+        sleep(1);
+    }
+    else if (choice == "4") // fold
+    {
+        cout << "You have chosen fold, skipping the remaining rounds..." << endl;
+        sleep(1);
+        players[playeridx].hasFolded = true;
+    }
+    else if (choice == "5") // all-in
+    {
+        pot += players[playeridx].chips;
+        players[playeridx].chips = 0;
+    }
+    else
+    {
+        cout << "Invalid input. Please try again:(" << endl;
+        sleep(1);
+        cout << "Choose your bet: ";
+        cin >> choice;
+        bet(choice, playeridx, minimum_bet);
+    }
+}
+
+void Texas::game_flow()
+{
+    int phase, minimum_bet = 1;
+    for (phase = 0; phase < 3; phase++)
+    {
+        switch (phase)
+        {
+            case 0: // flop
+                cout << "Round: FLOP" << endl;
+                community_cards[0] = draw_card();
+                community_cards[1] = draw_card();
+                community_cards[2] = draw_card();
+                break;
+            case 1: // turn
+                cout << "Round: TURN" << endl;
+                community_cards[3] = draw_card();
+                break;
+            case 2: // river
+                cout << "Round: RIVER" << endl;
+                community_cards[4] = draw_card();
+                break;
+        }
+        if (!players[0].hasFolded)
+        {
+            print_table(phase);
+
+            // player input bet
+            string choice;
+            cout << "(1) call" << endl;
+            cout << "(2) raise" << endl;
+            cout << "(3) check" << endl;
+            cout << "(4) fold" << endl;
+            cout << "(5) all-in" << endl;
+            cout << "Choose your bet: (You have " << players[0].chips << " chips) ";
+            cin >> choice; 
+            bet(choice, 0, minimum_bet);
+            if (!players[0].hasFolded) // player status does not change
+                cout << "Heading to another round..." << endl;
+            sleep(1);
+        }
+
+        // NPC automatic bet
+        for (int i = 1; i < PLAYER_NUM; i++)
+        {
+            if (players[i].hasFolded)
+            {
+                continue;
+            }
+            else if (players[i].chips >= minimum_bet)
+            {
+                players[i].chips -= minimum_bet;
+                pot += minimum_bet;
+            }
+            else 
+            {
+                players[i].hasFolded = true;
+            }
+        }
+
+        clear();
+    }
+
+    cout << "RESULT" << endl;
+    print_table(phase);
+    int winner = get_winner();
+    sleep(1);
+    cout << "So the winner of this round is: " << players[winner].name << "!" << endl;
+    sleep(1);
+    cout << players[winner].name << " + " << pot << " chips" << endl;
+    players[winner].chips += pot;
+}
+
+int get_pattern_rank(int suit[7], int rank[7])
+{
+    /*check rank,straight 
+    2=2,3=3,...,J=11,Q=12,K=13,A=14;*/
+
+    sort(rank, rank + 7);
+
+    int str_rank = 0;
+    for (int a = 2; a > -1; a--) {
+        int count_rank =0;
+        for (int b = a; b < a + 5; b++)
+        {
+            if (rank[b] + 1 == rank[b + 1])
+            {
+                count_rank ++;
+            }
+        }
+        if (count_rank == 4)
+        {
+            str_rank = 1;
+            break;
+        }
+    }  
+
+    // check suit, flush
+    int S = 0,H = 0,D = 0,C = 0,str_suit = 0;    
+    for (int c = 0; c < 7; c ++)
+    {
+        if (suit[c] <= 12)
+        {
+            S++;
+        }
+        else if (suit[c] > 12 && suit[c] <= 25)
+        {
+            H++;
+        }
+        else if (suit[c] > 25 && suit[c] <= 38)
+        {
+            D++;
+        }
+        else
+        {
+            C++;
+        }
+    }
+
+    if (S >= 5 || H >= 5 || D >= 5 || C >= 5) 
+    {
+        str_suit = 1;
+    }   
+
+    // check the three of a kind,two pair,one pair, fullhouse 
+
+    int three_of_a_kind = 0, two_pairs = 0, one_pairs = 0,  Four_of_a_kind = 0;
+    for (int d = 0; d < 7; d++) 
+    {
+        int count_pattern = 1;
+        for (int e = d + 1; e < 7; e++) 
+        {
+            if (rank[d] == rank[e] && d != e && (rank[d] != -1 || rank[e] != -1)) 
+            {
+                count_pattern++;
+                rank[e] = -1;
+            } 
+        }
+        if (count_pattern == 2) 
+        {
+            one_pairs++;
+        }
+        else if (count_pattern == 3 ) 
+        {
+            three_of_a_kind++;
+        }  
+        else if (count_pattern == 4) 
+        {
+            Four_of_a_kind++;
+        }
+    }  
+
+    if (str_suit == 1 && str_rank == 1)
+    {
+        cout << "Straight Flush !";
+        return 8;        
+    }
+    else if (Four_of_a_kind >= 1)
+    {
+        cout << "Four of a Kind !";
+        return 7; }
+
+    else if ((one_pairs > 0 && three_of_a_kind > 0) || three_of_a_kind == 2)
+    {
+        cout << "Full House !";
+        return 6;
+    }
+    else if (str_suit == 1 && str_rank != 1)
+    {
+        cout << "Flush !";
+        return 5;
+    }
+    else if (str_suit != 1 && str_rank == 1)
+    {
+        cout << "Straight !";
+        return 4;
+    }
+    else if (three_of_a_kind == 1 && one_pairs == 0)
+    {
+        cout << "Three of a Kind !";
+        return 3;
+    }    
+    else if (one_pairs >= 2 && three_of_a_kind == 0)
+    {
+        cout << "Two Pairs !";
+        return 2;
+    } 
+    else if (one_pairs == 1 && three_of_a_kind == 0)
+    {
+        cout << "One Pairs !";
+        return 1;
+    }    
+    else 
+    {
+        cout << "No Special Pattern !";
+        return 0;
+    }
+}
+
+int Texas::get_winner()
 {
     int highest_rank_player = -1;
     int highest_rank = 0;
@@ -180,13 +459,19 @@ Player Texas::get_winner()
 
     for (int i = 0; i < PLAYER_NUM; i++)
     {
+        if (players[i].hasFolded)
+            continue;
+        
         for (int j = 0; j < 2; j++)
         {
             rank[5+j] = players[i].hole_card[j].rankidx;
             suit[5+j] = players[i].hole_card[j].suitidx;
         }
 
+        cout << players[i].name << " got: ";
         int current_rank = get_pattern_rank(suit, rank);
+        cout << endl;
+
         if (current_rank > highest_rank)
         {
             highest_rank = current_rank;
@@ -197,7 +482,8 @@ Player Texas::get_winner()
             // TODO: declare another function here  
         }
     }
-    return players[highest_rank_player];
+    delete[] rank; delete[] suit;
+    return highest_rank_player;
 }
 
 void game_init();
@@ -215,7 +501,6 @@ void game_init()
     // set seed value for generating random numbers
     srand((unsigned) time(NULL));
     
-    cout << "♦" << endl;
     cout << R"( _____                       ___      _             )" << endl;
     cout << R"(/__   \_____  ____ _ ___    / _ \___ | | _____ _ __ )" << endl;
     cout << R"(  / /\/ _ \ \/ / _` / __|  / /_)/ _ \| |/ / _ \ '__|)" << endl;
@@ -223,7 +508,8 @@ void game_init()
     cout << R"( \/   \___/_/\_\__,_|___/ \/    \___/|_|\_\___|_|   )" << endl;
     cout << "\nWelcome to Texas Poker:)" << endl;
     cout << "Press \033[2menter\033[0m to continue...";
-    cin.get();
+    cin.ignore(1024, '\n');
+    // cin.get();
     clear();
 
     int round_count = 1;
@@ -238,136 +524,36 @@ void game_init()
         {
             round_count++;
         }
-    }   
+    }
 }
 
 bool game_round()
 {
-    int player_turn = 0;
-    Texas dealer;
+    Texas *dealer = new Texas;
     cout << "Shuffling the cards and dealing..." << endl;
     sleep(1);
-    dealer.print_table();
-    // TODO: flop: rand three community cards + ask for input
 
-    // TODO: turn: rand one community card + ask for input
+    dealer->game_flow();
 
-    // TODO: river: rand one community card + ask for input
-
-    // TODO: compare the rank of the players who doesn't fold
-    dealer.get_winner();
-    // TODO: break if the player chose fold
-
-    // TODO: ask for command 
-    return false;
+    delete dealer;
+    string choice;
+    cout << "Continue playing? (Y/N) ";
+    while (1)
+    {
+        cin >> choice;
+        if (choice == "Y" || choice == "y")
+        {
+            clear();
+            return true;
+        }
+        else if (choice == "N" || choice == "n")
+        {
+            clear();
+            return false;
+        }
+        else
+        {
+            cout << "Invalid input. Please try again:(" << endl;
+        }
+    }
 }
-
-int get_pattern_rank(int suit[7], int rank[7]){
-    /*check rank,straight 
-    2=2,3=3,...,J=11,Q=12,K=13,A=14;*/
-    
-    sort(rank, rank + 7);
-
-    int str_rank = 0;
-    for (int a = 2; a > -1; a--){
-        int count_rank =0;
-        for (int b = a; b < a + 5; b++){
-        if (rank[b] + 1 == rank[b + 1]){
-            count_rank ++;
-        }}
-        if (count_rank == 4){
-            str_rank = 1;
-            break;
-        }}  
-// check suit, flush
-/* define card indices:
-        0~12 spade
-        13~25 heart
-        26~38 diamond
-        39~51 club*/
-    int S = 0,H = 0,D = 0,C = 0,str_suit = 0;    
-    for (int c = 0; c < 7; c ++){
-        
-        if (suit[c] <= 12){
-            S++;
-        }
-        else if (suit[c] > 12 && suit[c] <= 25){
-            H++;
-        }
-        else if (suit[c] > 25 && suit[c] <= 38){
-            D++;
-        }
-        else{
-            C++;
-        }}      
-    if (S >= 5 || H >= 5 || D >= 5 || C >= 5) {
-        str_suit = 1;
-    }   
-
-    // check the three of a kind,two pair,one pair, fullhouse 
-
-int three_of_a_kind = 0, two_pairs = 0, one_pairs = 0,  Four_of_a_kind = 0;
-for (int d = 0; d < 7; d++) {
-    int count_pattern = 1;
-    for (int e = d + 1; e < 7; e++) {
-        if (rank[d] == rank[e] && d != e && (rank[d] != -1 || rank[e] != -1)) {
-            count_pattern++;
-            rank[e] = -1;
-        } 
-
-
-
-
-    }
-    if (count_pattern == 2) {
-        one_pairs++; }
-    else if (count_pattern == 3 ) {
-            three_of_a_kind++;}  
-    else if (count_pattern == 4) {
-        Four_of_a_kind++;
-    }
-
-}  
-
-
-
-
-
-    
-    
-    if (str_suit == 1 && str_rank == 1){
-        cout << "Straight Flush !" << endl;
-        return 8;        
-    }
-    else if (Four_of_a_kind >= 1){
-        cout << "Four of a Kind !" << endl;
-        return 7; }
-
-    else if ((one_pairs > 0 && three_of_a_kind > 0) || three_of_a_kind == 2){
-        cout << "Full House !" << endl;
-        return 6;}
-
-    else if (str_suit ==1 && str_rank != 1){
-        cout << "Flush !" << endl;
-        return 5;
-    }
-    else if (str_suit != 1 && str_rank == 1){
-        cout << "Straight !" << endl;
-        return 4;}
-
-    else if (three_of_a_kind == 1 && one_pairs == 0){
-        cout << "Three of a Kind !" << endl;
-        return 3;}    
-
-    else if (one_pairs >= 2 && three_of_a_kind == 0 ){
-        cout << "Two Pairs !" << endl;
-        return 2;} 
-
-    else if (one_pairs == 1 && three_of_a_kind == 0){
-        cout << "One Pairs !" << endl;
-        return 1;}    
-    else {
-        cout << "No Special Pattern !";
-        return 0;}
-}
-
