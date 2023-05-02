@@ -340,6 +340,10 @@ int get_pattern_rank(int suit[7], int rank[7])
             str_rank = 1;
             break;
         }
+        if (rank[0] == 2 && rank[1] == 3 && rank[2] == 4 && rank[3] == 5 && rank[6] == 14){
+            str_rank = 1;
+            break;
+        }
     }  
 
     // check suit, flush
