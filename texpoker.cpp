@@ -340,25 +340,29 @@ int get_pattern_rank(int suit[7], int rank[7])
             str_rank = 1;
             break;
         }
+        if (rank[0] == 2 && rank[1] == 3 && rank[2] == 4 && rank[3] == 5 && rank[6] == 14){
+            str_rank = 1;
+            break;
+        }
     }  
 
     // check suit, flush
     int S = 0,H = 0,D = 0,C = 0,str_suit = 0;    
     for (int c = 0; c < 7; c ++)
     {
-        if (suit[c] <= 12)
+        if (suit[c] == 0)
         {
             S++;
         }
-        else if (suit[c] > 12 && suit[c] <= 25)
+        else if (suit[c] == 1)
         {
             H++;
         }
-        else if (suit[c] > 25 && suit[c] <= 38)
+        else if (suit[c] == 2)
         {
             D++;
         }
-        else
+        else if (suit[c] == 3)
         {
             C++;
         }
