@@ -80,7 +80,7 @@ Card Texas::draw_card()
         idx = rand() % CARD_NUM;
     }
     cards[idx] = 1;
-       
+
     c.suitidx = idx / 13;
     c.rankidx = idx % 13 + 2;
 
@@ -180,6 +180,7 @@ void Texas::print_table(int phase)
 
         Card c1 = players[i].hole_card[0];
         Card c2 = players[i].hole_card[1];
+        cout << c1.rankidx << " " << c1.suitidx << " " << c2.rankidx << " " << c2.suitidx << endl;
         printf(".-----.    .-----.\n");
         printf("|%s   |    |%s   |\n", c1.rank.c_str(), c2.rank.c_str());
         printf("|  %s  |    |  %s  |\n", c1.suit.c_str(), c2.suit.c_str());
@@ -409,8 +410,8 @@ int get_pattern_rank(int suit[7], int rank[7])
     else if (Four_of_a_kind >= 1)
     {
         cout << "Four of a Kind !";
-        return 7; }
-
+        return 7; 
+    }
     else if ((one_pairs > 0 && three_of_a_kind > 0) || three_of_a_kind == 2)
     {
         cout << "Full House !";
@@ -438,7 +439,7 @@ int get_pattern_rank(int suit[7], int rank[7])
     } 
     else if (one_pairs == 1 && three_of_a_kind == 0)
     {
-        cout << "One Pairs !";
+        cout << "One Pair !";
         return 1;
     }    
     else 
@@ -454,24 +455,27 @@ int Texas::get_winner()
     int highest_rank = 0;
     int *rank = new int[7];
     int *suit = new int[7];
-    // store the data from the community cards
-    for (int i = 0; i < 5; i++)
-    {
-        rank[i] = community_cards[i].rankidx;
-        suit[i] = community_cards[i].suitidx;
-    }
 
     for (int i = 0; i < PLAYER_NUM; i++)
     {
         if (players[i].hasFolded)
             continue;
-        
+
+        // store the data from the community cards & players
+        for (int j = 0; j < 5; j++)
+        {
+            rank[j] = community_cards[j].rankidx;
+            suit[j] = community_cards[j].suitidx;
+        }
         for (int j = 0; j < 2; j++)
         {
             rank[5+j] = players[i].hole_card[j].rankidx;
             suit[5+j] = players[i].hole_card[j].suitidx;
         }
-
+        
+        for (int k = 0; k < 7; k++)
+            cout << rank[k] << " ";
+        cout << endl;
         cout << players[i].name << " got: ";
         int current_rank = get_pattern_rank(suit, rank);
         cout << endl;
