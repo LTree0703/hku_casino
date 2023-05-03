@@ -327,21 +327,13 @@ int get_pattern_rank(int suit[7], int rank[7])
     sort(rank, rank + 7);
 
     int str_rank = 0;
-    for (int a = 2; a > -1; a--) {
-        int count_rank =0;
-        for (int b = a; b < a + 5; b++)
-        {
-            if (rank[b] + 1 == rank[b + 1])
-            {
-                count_rank ++;
-            }
-        }
-        if (count_rank == 4)
-        {
+    for (int a = 6; a >3;a--){
+        if (rank[a] - 1 == rank[a - 1] && rank[a] - 2 == rank[a - 2] && rank[a] - 3 == rank[a - 3]  && rank[a] - 4 == rank[a - 4] && rank[a] - 5 == rank[a - 5]){
             str_rank = 1;
             break;
         }
-        if (rank[0] == 2 && rank[1] == 3 && rank[2] == 4 && rank[3] == 5 && rank[6] == 14){
+    
+            if (rank[0] == 2 && rank[1] == 3 && rank[2] == 4 && rank[3] == 5 && rank[6] == 14){
             str_rank = 1;
             break;
         }
