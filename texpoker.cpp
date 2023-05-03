@@ -328,7 +328,7 @@ int get_pattern_rank(int suit[7], int rank[7])
 
     int str_rank = 0;
     for (int a = 6; a >3;a--){
-        if (rank[a] - 1 == rank[a - 1] && rank[a] - 2 == rank[a - 2] && rank[a] - 3 == rank[a - 3]  && rank[a] - 4 == rank[a - 4] && rank[a] - 5 == rank[a - 5]){
+        if (rank[a] - 1 == rank[a - 1] && rank[a] - 2 == rank[a - 2] && rank[a] - 3 == rank[a - 3]  && rank[a] - 4 == rank[a - 4] ){
             str_rank = 1;
             break;
         }
