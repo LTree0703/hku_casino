@@ -6,6 +6,14 @@ using namespace std;
 
 int main()
 {
+cout << "\n===============================================================================================";
+cout << "\nH    H   K    K   U    U  CCCCC      A        SSSSSSSSS   IIIIIIIII  NN     NN    OOOOOOOO     ";
+cout << "\nH    H   K  K     U    U  CC        A  A      SS             III     NN N   NN   OO      OO    ";
+cout << "\nHHHHHH   KKK      U    U  CC       A    A     SSSSSSSSS      III     NN  N  NN   OO      OO    ";
+cout << "\nH    H   K  K     U    U  CC      AAAAAAAA           SS      III     NN   N NN   OO      OO    ";
+cout << "\nH    H   K    K   UUUUUU. CCCCC  A        A   SSSSSSSSS   IIIIIIIII  NN     NN    OOOOOOOO     ";
+cout << "\n===============================================================================================\n";
+
     srand(time(0)); // seed the random number generator with the current time
 
     const int NUM_SYMBOLS = 7; // number of symbols in the slot machine
@@ -53,7 +61,7 @@ int main()
 
     } while (true);
 
-    cout << "Thanks for playing! Goodbye." << endl;
+    cout << "Thanks for playing the HKU Slot Machine! Goodbye!" << endl;
 
     return 0;
 }
