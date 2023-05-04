@@ -63,5 +63,5 @@ cout << "\n=====================================================================
 
     cout << "Thanks for playing the HKU Slot Machine! Goodbye!" << endl;
 
-    return 0;
+    
 }
