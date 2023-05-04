@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int main()
+void slot_init()
 {
 cout << "\n===============================================================================================";
 cout << "\nH    H   K    K   U    U  CCCCC      A        SSSSSSSSS   IIIIIIIII  NN     NN    OOOOOOOO     ";
