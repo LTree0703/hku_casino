@@ -1,0 +1,43 @@
+              This is a single player Texas Hold'em
+                    The rules of Texas Hold'em
+1. You, will always be the blind
+
+2. At the beginning of the game, you bet the chips first
+
+3. Each player will be dealt two cards
+
+4. After dealing the bottom card, proceed to step 5 (all blinds, calls will go into the pot)
+You can choose a.Fold c.All-in c.Raise(with amount) d. Check
+
+6. Since this is a single player game
+a . If you choose Raise (with amount) ,npcs will call when the they have enough chips, and fold if they don't have enough chips.
+b. If you choose All-in, npcs will also choose All-in.
+c. If you choose to fold, then the winner will be announced directly
+d. If you choose to check, then nps also check
+
+7. Turn over the three public cards and repeat step 5 (Flop)
+
+8. Turn over the fourth public card and repeat step 5 (Turn)
+
+9. Turn over the last public card(River), announce the winner, and the winner takes all the accumulated chips in the pot (if there is an extra winner, the chips are divided equally) 
+
+
+
+
+The rank of the cards (only the 5 cards out of 7 will be compared)
+
+1. Royal Flush            i.e (S)10 (S)J  (S)Q  (S)K  (S)A
+2. Straight Flush         i.e (H)5  (H)6  (H)7  (H)8  (H)9  
+3. Four of a Kind         i.e (H)3  (C)3  (D)3  (S)3  (D)10
+4. Full House             i.e (H)J  (C)J  (D)J  (H)K  (D)K
+5. Flush                  i.e (D)2  (D)4  (D)5  (D)9  (D)K
+6. Straight               i.e (D)A  (C)2  (D)3  (S)4  (H)5
+7. Three of a Kind        i.e (C)7  (D)7  (H)7  (S)4  (H)5
+8. Two Pair               i.e (D)9  (S)9  (D)K  (H)K  (S)4
+9. One Pair               i.e (D)10 (C)10 (C)3  D(Q)  (H)K
+10. High Card             i.e (C)K  (H)2  (D)4  H(8)  S(Q)
+
+P.S  Spade   = S
+     Heart   = H
+     Club    = C
+     Diamond = D
