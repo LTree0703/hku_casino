@@ -4,7 +4,7 @@
 #include <ctime>
 using namespace std;
 void rules();
-int main()
+void roulette_init()
 {
     string playerName;
     int balance; 
@@ -62,7 +62,7 @@ int main()
     }while(choice =='Y'|| choice=='y');
     cout << "\n\n\n";
     cout << "\n\nThanks for playing the game. Your balance is $ " << balance << "\n\n";
-    return 0;
+    
 }
 void rules()
 {
