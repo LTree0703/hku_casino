@@ -323,127 +323,127 @@ void Texas::game_flow()
     players[winner].chips += pot;
 }
 
-int get_pattern_rank(int suit[7], int rank[7])
-{
-    /*check rank,straight 
-    2=2,3=3,...,J=11,Q=12,K=13,A=14;*/
-
-    sort(rank, rank + 7);
-
-    int str_rank = 0;
-    for (int a = 6; a >3;a--){
-        if (rank[a] - 1 == rank[a - 1] && rank[a] - 2 == rank[a - 2] && rank[a] - 3 == rank[a - 3]  && rank[a] - 4 == rank[a - 4] ){
-            str_rank = 1;
-            break;
-        }
-    
-            if (rank[0] == 2 && rank[1] == 3 && rank[2] == 4 && rank[3] == 5 && rank[6] == 14){
-            str_rank = 1;
-            break;
-        }
-    }  
-
-    // check suit, flush
-    int S = 0,H = 0,D = 0,C = 0,str_suit = 0;    
-    for (int c = 0; c < 7; c ++)
-    {
-        if (suit[c] == 0)
-        {
-            S++;
-        }
-        else if (suit[c] == 1)
-        {
-            H++;
-        }
-        else if (suit[c] == 2)
-        {
-            D++;
-        }
-        else if (suit[c] == 3)
-        {
-            C++;
-        }
-    }
-
-    if (S >= 5 || H >= 5 || D >= 5 || C >= 5) 
-    {
-        str_suit = 1;
-    }   
-
-    // check the three of a kind,two pair,one pair, fullhouse 
-
-    int three_of_a_kind = 0, two_pairs = 0, one_pairs = 0,  Four_of_a_kind = 0;
-    for (int d = 0; d < 7; d++) 
-    {
-        int count_pattern = 1;
-        for (int e = d + 1; e < 7; e++) 
-        {
-            if (rank[d] == rank[e] && d != e && (rank[d] != -1 || rank[e] != -1)) 
-            {
-                count_pattern++;
-                rank[e] = -1;
-            } 
-        }
-        if (count_pattern == 2) 
-        {
-            one_pairs++;
-        }
-        else if (count_pattern == 3 ) 
-        {
-            three_of_a_kind++;
-        }  
-        else if (count_pattern == 4) 
-        {
-            Four_of_a_kind++;
-        }
-    }  
-
-    if (str_suit == 1 && str_rank == 1)
-    {
-        cout << "Straight Flush !";
-        return 8;        
-    }
-    else if (Four_of_a_kind >= 1)
-    {
-        cout << "Four of a Kind !";
-        return 7; 
-    }
-    else if ((one_pairs > 0 && three_of_a_kind > 0) || three_of_a_kind == 2)
-    {
-        cout << "Full House !";
-        return 6;
-    }
-    else if (str_suit == 1 && str_rank != 1)
-    {
-        cout << "Flush !";
-        return 5;
-    }
-    else if (str_suit != 1 && str_rank == 1)
-    {
-        cout << "Straight !";
-        return 4;
-    }
-    else if (three_of_a_kind == 1 && one_pairs == 0)
-    {
-        cout << "Three of a Kind !";
-        return 3;
-    }    
-    else if (one_pairs >= 2 && three_of_a_kind == 0)
-    {
-        cout << "Two Pairs !";
-        return 2;
-    } 
-    else if (one_pairs == 1 && three_of_a_kind == 0)
-    {
-        cout << "One Pair !";
-        return 1;
-    }    
-    else 
-    {
-        cout << "No Special Pattern !";
-        return 0;
-    }
-}
+// int get_pattern_rank(int suit[7], int rank[7])
+// {
+//     /*check rank,straight 
+//     2=2,3=3,...,J=11,Q=12,K=13,A=14;*/
+// 
+//     sort(rank, rank + 7);
+// 
+//     int str_rank = 0;
+//     for (int a = 6; a >3;a--){
+//         if (rank[a] - 1 == rank[a - 1] && rank[a] - 2 == rank[a - // 2] && rank[a] - 3 == rank[a - 3]  && rank[a] - 4 == rank[a - // 4] ){
+//             str_rank = 1;
+//             break;
+//         }
+//     
+//             if (rank[0] == 2 && rank[1] == 3 && rank[2] == 4 && rank// [3] == 5 && rank[6] == 14){
+//             str_rank = 1;
+//             break;
+//         }
+//     }  
+// 
+//     // check suit, flush
+//     int S = 0,H = 0,D = 0,C = 0,str_suit = 0;    
+//     for (int c = 0; c < 7; c ++)
+//     {
+//         if (suit[c] == 0)
+//         {
+//             S++;
+//         }
+//         else if (suit[c] == 1)
+//         {
+//             H++;
+//         }
+//         else if (suit[c] == 2)
+//         {
+//             D++;
+//         }
+//         else if (suit[c] == 3)
+//         {
+//             C++;
+//         }
+//     }
+// 
+//     if (S >= 5 || H >= 5 || D >= 5 || C >= 5) 
+//     {
+//         str_suit = 1;
+//     }   
+// 
+//     // check the three of a kind,two pair,one pair, fullhouse 
+// 
+//     int three_of_a_kind = 0, two_pairs = 0, one_pairs = 0,  // Four_of_a_kind = 0;
+//     for (int d = 0; d < 7; d++) 
+//     {
+//         int count_pattern = 1;
+//         for (int e = d + 1; e < 7; e++) 
+//         {
+//             if (rank[d] == rank[e] && d != e && (rank[d] != -1 || rank// [e] != -1)) 
+//             {
+//                 count_pattern++;
+//                 rank[e] = -1;
+//             } 
+//         }
+//         if (count_pattern == 2) 
+//         {
+//             one_pairs++;
+//         }
+//         else if (count_pattern == 3 ) 
+//         {
+//             three_of_a_kind++;
+//         }  
+//         else if (count_pattern == 4) 
+//         {
+//             Four_of_a_kind++;
+//         }
+//     }  
+// 
+//     if (str_suit == 1 && str_rank == 1)
+//     {
+//         cout << "Straight Flush !";
+//         return 8;        
+//     }
+//     else if (Four_of_a_kind >= 1)
+//     {
+//         cout << "Four of a Kind !";
+//         return 7; 
+//     }
+//     else if ((one_pairs > 0 && three_of_a_kind > 0) || three_of_a_kind // == 2)
+//     {
+//         cout << "Full House !";
+//         return 6;
+//     }
+//     else if (str_suit == 1 && str_rank != 1)
+//     {
+//         cout << "Flush !";
+//         return 5;
+//     }
+//     else if (str_suit != 1 && str_rank == 1)
+//     {
+//         cout << "Straight !";
+//         return 4;
+//     }
+//     else if (three_of_a_kind == 1 && one_pairs == 0)
+//     {
+//         cout << "Three of a Kind !";
+//         return 3;
+//     }    
+//     else if (one_pairs >= 2 && three_of_a_kind == 0)
+//     {
+//         cout << "Two Pairs !";
+//         return 2;
+//     } 
+//     else if (one_pairs == 1 && three_of_a_kind == 0)
+//     {
+//         cout << "One Pair !";
+//         return 1;
+//     }    
+//     else 
+//     {
+//         cout << "No Special Pattern !";
+//         return 0;
+//     }
+// }
 
 int Texas::get_winner()
 {
@@ -503,7 +503,7 @@ int Texas::get_winner()
                 cout << "No specific pattern!";
                 break;
         }
-        // cout << endl;
+        cout << endl;
         // cout << "current rank: " << current_rank << endl;
         // for (int j = 0; j < c.size(); j++)
         // {
@@ -550,7 +550,6 @@ void game_init()
     // set seed value for generating random numbers
     srand((unsigned) time(NULL));
     
-    cout << "♦" << endl;
     cout << R"( _____                       ___      _             )" << endl;
     cout << R"(/__   \_____  ____ _ ___    / _ \___ | | _____ _ __ )" << endl;
     cout << R"(  / /\/ _ \ \/ / _` / __|  / /_)/ _ \| |/ / _ \ '__|)" << endl;
@@ -598,6 +597,8 @@ bool game_round()
         }
         else if (choice == "N" || choice == "n")
         {
+            cout << "Thanks for playing Texas Poker:)" << endl;
+            sleep(1);
             clear();
             return false;
         }
