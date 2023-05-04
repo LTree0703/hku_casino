@@ -696,16 +696,17 @@ vector<Card> Texas::get_pattern(int player_id, int &rank)
         if (pair_count == 2)
         {
             rank = 2;
+            return pattern;
         }
         else if (pair_count == 1)
         {
             rank = 1;
+            return pattern;
         }
         else 
         {
             rank = 0;
         }
-        return pattern;
     }
     // No specific pattern, return the largest card
     pattern.push_back(c[0]);
