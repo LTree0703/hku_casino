@@ -129,8 +129,8 @@ void restartGame() {
     if (fin.fail()){
         cout << "Error !" << endl;
     }else{
-        string line;
-        while (getline(fin,line)){
+        string line2;
+        while (getline(fin,line2)){
             cout << line << endl;
         }
         fin.close();
