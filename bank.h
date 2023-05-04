@@ -1,7 +1,5 @@
-#ifndef BANK_HPP
-#define BANK_HPP
-
-#include <iostream>
+#ifndef BANK_H
+#define BANK_H
 
 void bankMenu();
 void deposit(double &balance);

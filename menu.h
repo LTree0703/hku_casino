@@ -1,10 +1,7 @@
-menu.hpp
-
-#ifndef MENU_HPP
-#define MENU_HPP
+#ifndef MENU_H
+#define MENU_H
 
 #include <iostream>
-#include <conio.h>
 
 void displayMenu();
 void restartGame();

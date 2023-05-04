@@ -6,17 +6,17 @@
 #include <algorithm>
 #include <vector>
 
-// #include "func.h"
+#include "func.h"
 
 using namespace std;
 
 #define CARD_NUM 52
 #define PLAYER_NUM 5
 
-void clear() // clear console output
-{
-    cout << "\x1B[2J\x1B[H";
-}
+// void clear() // clear console output
+// {
+//     cout << "\x1B[2J\x1B[H";
+// }
 
 struct Card {
     int suitidx;
@@ -535,80 +535,6 @@ int Texas::get_winner()
     return highest_rank_player;
 }
 
-void game_init();
-bool game_round();
-
-int main()
-{
-    game_init();
-    return 0;
-}
-
-void game_init()
-{
-    clear();
-    // set seed value for generating random numbers
-    srand((unsigned) time(NULL));
-    
-    cout << R"( _____                       ___      _             )" << endl;
-    cout << R"(/__   \_____  ____ _ ___    / _ \___ | | _____ _ __ )" << endl;
-    cout << R"(  / /\/ _ \ \/ / _` / __|  / /_)/ _ \| |/ / _ \ '__|)" << endl;
-    cout << R"( / / |  __/>  < (_| \__ \ / ___/ (_) |   <  __/ |   )" << endl;
-    cout << R"( \/   \___/_/\_\__,_|___/ \/    \___/|_|\_\___|_|   )" << endl;
-    cout << "\nWelcome to Texas Poker:)" << endl;
-    cout << "Press \033[2menter\033[0m to continue...";
-    cin.ignore(1024, '\n');
-    // cin.get();
-    clear();
-
-    int round_count = 1;
-    while (1)
-    {
-        cout << "\n\033[1;34mGetting ready for round: " << round_count << "\033[0m" << endl;
-        if (!game_round()) // return true if continue, false otherwise
-        {
-            break;
-        }
-        else
-        {
-            round_count++;
-        }
-    }
-}
-
-bool game_round()
-{
-    Texas *dealer = new Texas;
-    cout << "Shuffling the cards and dealing..." << endl;
-    sleep(1);
-
-    dealer->game_flow();
-
-    delete dealer;
-    string choice;
-    cout << "Continue playing? (Y/N) ";
-    while (1)
-    {
-        cin >> choice;
-        if (choice == "Y" || choice == "y")
-        {
-            clear();
-            return true;
-        }
-        else if (choice == "N" || choice == "n")
-        {
-            cout << "Thanks for playing Texas Poker:)" << endl;
-            sleep(1);
-            clear();
-            return false;
-        }
-        else
-        {
-            cout << "Invalid input. Please try again:(" << endl;
-        }
-    }
-}
-
 vector<Card> Texas::get_pattern(int player_id, int &rank)
 {
     vector<Card> c;
@@ -784,4 +710,71 @@ vector<Card> Texas::get_pattern(int player_id, int &rank)
     // No specific pattern, return the largest card
     pattern.push_back(c[0]);
     return pattern;
+}
+
+bool game_round();
+
+void texpoker_init()
+{
+    clear();
+    // set seed value for generating random numbers
+    srand((unsigned) time(NULL));
+    
+    cout << R"( _____                       ___      _             )" << endl;
+    cout << R"(/__   \_____  ____ _ ___    / _ \___ | | _____ _ __ )" << endl;
+    cout << R"(  / /\/ _ \ \/ / _` / __|  / /_)/ _ \| |/ / _ \ '__|)" << endl;
+    cout << R"( / / |  __/>  < (_| \__ \ / ___/ (_) |   <  __/ |   )" << endl;
+    cout << R"( \/   \___/_/\_\__,_|___/ \/    \___/|_|\_\___|_|   )" << endl;
+    cout << "\nWelcome to Texas Poker:)" << endl;
+    cout << "Press \033[2menter\033[0m to continue...";
+    cin.ignore(1024, '\n');
+    cin.get();
+    clear();
+
+    int round_count = 1;
+    while (1)
+    {
+        cout << "\n\033[1;34mGetting ready for round: " << round_count << "\033[0m" << endl;
+        if (!game_round()) // return true if continue, false otherwise
+        {
+            break;
+        }
+        else
+        {
+            round_count++;
+        }
+    }
+}
+
+bool game_round()
+{
+    Texas *dealer = new Texas;
+    cout << "Shuffling the cards and dealing..." << endl;
+    sleep(1);
+
+    dealer->game_flow();
+
+    delete dealer;
+    string choice;
+    cout << "Continue playing? (Y/N) ";
+    while (1)
+    {
+        cin >> choice;
+        if (choice == "Y" || choice == "y")
+        {
+            clear();
+            return true;
+        }
+        else if (choice == "N" || choice == "n")
+        {
+            cout << "Thanks for playing Texas Poker:)" << endl;
+            sleep(1);
+            clear();
+            return false;
+        }
+        else
+        {
+            cout << "Invalid input. Please try again:(" << endl;
+        }
+    }
 }

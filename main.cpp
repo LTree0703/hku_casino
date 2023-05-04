@@ -3,27 +3,11 @@
 #include <fstream>
 #include <string>
 
-#include "func.h"
-
-using namespace std;
-
-int main()
-{
-    clear();
-    string menu;
-    read_file("menu.txt", menu);
-    while (1)
-    {
-        cout << menu;
-        cin.get();
-        clear();
-    }
-}
-
-#include <iostream>
-#include <conio.h>
-#include "menu.hpp"
-#include "bank.hpp"
+#include "menu.h"
+#include "bank.h"
+#include "roulette.h"
+#include "texpoker.h"
+#include "slotmachine.h"
 
 using namespace std;
 

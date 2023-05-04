@@ -1,6 +1,6 @@
 #ifndef TEXPOKER_H
 #define TEXPOKER_H
 
-void game_init();
+void texpoker_init();
 
 #endif
