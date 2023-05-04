@@ -19,3 +19,22 @@ void restartGame() {
 void exitGame() {
     cout << "Exiting the game..." << endl;
 }
+
+bool login() {
+    string username, password;
+
+    cout << "Enter your account name: ";
+    cin >> username;
+    cout << "Enter your password: ";
+    cin >> password;
+
+    return validateCredentials(username, password);
+}
+
+bool validateCredentials(const std::string& username, const std::string& password) {
+    // Replace these hardcoded values with your desired account name and password
+    const string validUsername = "player";
+    const string validPassword = "password";
+
+    return username == validUsername && password == validPassword;
+}
