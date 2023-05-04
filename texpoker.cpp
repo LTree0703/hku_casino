@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <algorithm>
+#include <vector>
 
 // #include "func.h"
 
@@ -39,6 +40,7 @@ public:
     void bet(string choice, int playeridx, int &bet); // returns an integer indicating the minimum number of chip required for call
     void game_flow();
     int get_winner(); // returns an integer indicating the index of the winner in the array players[]
+    vector<Card> get_pattern(int player_id, int &rank);
 
 private:
     int cards[CARD_NUM];
@@ -46,6 +48,15 @@ private:
     Card community_cards[PLAYER_NUM];
     Player players[PLAYER_NUM];
 };
+
+bool operator > (const Card &a, const Card &b)
+{
+    if (a.rankidx > b.rankidx) 
+        return true;
+    else if (a.rankidx < b.rankidx)
+        return false;
+    return (a.suitidx > b.suitidx);
+}
 
 Texas::Texas()
 {
@@ -146,12 +157,6 @@ string format(int pot)
 
 void Texas::print_table(int phase)
 {
-    // access players' chips and print on console
-    cout << endl << "Number of chips: " << endl;
-    for (int i = 0; i < PLAYER_NUM; i++)
-    {
-        printf("%s: %d chips\n", players[i].name.c_str(), players[i].chips);
-    }
 
     // print the table of community cards on console
     printf("  ______________________________________________\n");
@@ -180,7 +185,6 @@ void Texas::print_table(int phase)
 
         Card c1 = players[i].hole_card[0];
         Card c2 = players[i].hole_card[1];
-        cout << c1.rankidx << " " << c1.suitidx << " " << c2.rankidx << " " << c2.suitidx << endl;
         printf(".-----.    .-----.\n");
         printf("|%s   |    |%s   |\n", c1.rank.c_str(), c2.rank.c_str());
         printf("|  %s  |    |  %s  |\n", c1.suit.c_str(), c2.suit.c_str());
@@ -313,7 +317,7 @@ void Texas::game_flow()
     print_table(phase);
     int winner = get_winner();
     sleep(1);
-    cout << "So the winner of this round is: " << players[winner].name << "!" << endl;
+    cout << endl << "So the winner of this round is: " << players[winner].name << "!" << endl;
     sleep(1);
     cout << players[winner].name << " + " << pot << " chips" << endl;
     players[winner].chips += pot;
@@ -445,8 +449,8 @@ int Texas::get_winner()
 {
     int highest_rank_player = -1;
     int highest_rank = 0;
-    int *rank = new int[7];
-    int *suit = new int[7];
+    // int *rank = new int[7];
+    // int *suit = new int[7];
 
     for (int i = 0; i < PLAYER_NUM; i++)
     {
@@ -454,23 +458,63 @@ int Texas::get_winner()
             continue;
 
         // store the data from the community cards & players
-        for (int j = 0; j < 5; j++)
-        {
-            rank[j] = community_cards[j].rankidx;
-            suit[j] = community_cards[j].suitidx;
-        }
-        for (int j = 0; j < 2; j++)
-        {
-            rank[5+j] = players[i].hole_card[j].rankidx;
-            suit[5+j] = players[i].hole_card[j].suitidx;
-        }
-        
-        for (int k = 0; k < 7; k++)
-            cout << rank[k] << " ";
-        cout << endl;
+        // for (int j = 0; j < 5; j++)
+        // {
+        //     rank[j] = community_cards[j].rankidx;
+        //     suit[j] = community_cards[j].suitidx;
+        // }
+        // for (int j = 0; j < 2; j++)
+        // {
+        //     rank[5+j] = players[i].hole_card[j].rankidx;
+        //     suit[5+j] = players[i].hole_card[j].suitidx;
+        // }
+        int current_rank = 0;
         cout << players[i].name << " got: ";
-        int current_rank = get_pattern_rank(suit, rank);
-        cout << endl;
+        // int current_rank = get_pattern_rank(suit, rank);
+        vector<Card> c = get_pattern(i, current_rank);
+
+        switch(current_rank)
+        {
+            case 8:
+                cout << "Straight Flush!";
+                break;
+            case 7:
+                cout << "Four of a kind!";
+                break;
+            case 6:
+                cout << "Full House!";
+                break;
+            case 5:
+                cout << "Flush!";
+                break;
+            case 4:
+                cout << "Straight!";
+                break;
+            case 3:
+                cout << "Three of a kind!";
+                break;
+            case 2:
+                cout << "Two pairs!";
+                break;
+            case 1:
+                cout << "One pair!";
+                break;
+            case 0:
+                cout << "No specific pattern!";
+                break;
+        }
+        // cout << endl;
+        // cout << "current rank: " << current_rank << endl;
+        // for (int j = 0; j < c.size(); j++)
+        // {
+        //     cout << c[j].rankidx << " ";
+        // }
+        // cout << endl;
+        // for (int j = 0; j < c.size(); j++)
+        // {
+        //     cout << c[j].suitidx << " "; 
+        // }
+        // cout << endl;
 
         if (current_rank > highest_rank)
         {
@@ -479,10 +523,15 @@ int Texas::get_winner()
         }
         else if (current_rank == highest_rank)
         {
-            // TODO: declare another function here  
+            vector<Card> highest = get_pattern(highest_rank_player, current_rank);
+            // if condition satisfied, change the highest rank player
+            if (highest[0].rankidx < c[0].rankidx || (highest[0].rankidx == c[0].rankidx && highest[0].suitidx > c[0].suitidx)) // cards with smaller suitidx are larger
+            {
+                highest_rank_player = i;
+            }
         }
     }
-    delete[] rank; delete[] suit;
+    // delete[] rank; delete[] suit;
     return highest_rank_player;
 }
 
@@ -557,4 +606,181 @@ bool game_round()
             cout << "Invalid input. Please try again:(" << endl;
         }
     }
+}
+
+vector<Card> Texas::get_pattern(int player_id, int &rank)
+{
+    vector<Card> c;
+
+    // collect hand info
+    Card tmp;
+    int i, j;
+    for (i = 0; i < 5; i++)
+    {
+        tmp.rankidx = community_cards[i].rankidx;
+        tmp.suitidx = community_cards[i].suitidx;
+        c.push_back(tmp);
+    }
+    for (i = 0; i < 2; i++)
+    {
+        tmp.rankidx = players[player_id].hole_card[i].rankidx;
+        tmp.suitidx = players[player_id].hole_card[i].suitidx;
+        c.push_back(tmp);
+    }
+    sort(c.begin(), c.end(), greater<Card>());
+    const int size = c.size();
+    vector<Card> pattern = {};
+    
+    // straight flush
+    bool isStraightFlush = false;
+    for (i = 0; i < size-4; i++)
+    {
+        for (j = 1; j < 5; j++)
+        {
+            if ((c[i].rankidx != c[i+j].rankidx - j) || (c[i].suitidx != c[i+j].suitidx))
+                break;
+            if (j == 4)
+                isStraightFlush = true;
+        }
+        if (isStraightFlush)
+        {
+            rank = 8;
+            for (j = 0; j < 5; j++)
+            {
+                pattern.push_back(c[i+j]);
+            }
+            return pattern;
+        }
+    }
+
+    // Four of a kind
+    bool isFour = false;
+    for (i = 0; i < size-3; i++)
+    {
+        if (c[i].rankidx == c[i+1].rankidx && c[i].rankidx == c[i+2].rankidx && c[i].rankidx == c[i+3].rankidx)
+        {
+            isFour = true;
+        }
+        if (isFour)
+        {
+            rank = 7;
+            for (j = 0; j < 4; j++)
+            {
+                pattern.push_back(c[i+j]);
+            }
+            return pattern;
+        }
+    }
+
+    // Flush
+    int count = 0;
+    for (i = 0; i < 4; i++)
+    {
+        count = 0;
+        for (j = 0; j < size; j++)
+        {
+            if (c[j].suitidx == i)
+            {
+                count++;
+            }
+        }
+        if (count == 5) // isFlush
+        {
+            rank = 5;
+            for (j = 0; j < size; j++)
+            {
+                if (c[j].suitidx == i)
+                {
+                    pattern.push_back(c[j]);
+                }
+            }
+            return pattern;
+        }     
+    }
+
+    // Straight
+    bool isStraight = false;
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 1; j < 5; j++)
+        {
+            if (c[i].rankidx != c[i+j].rankidx - j)
+                break;
+            if (j == 4)
+                isStraight = true;
+        }
+        if (isStraight)
+        {
+            rank = 4;
+            for (j = 0; j < 5; j++)
+            {
+                pattern.push_back(c[i+j]);
+            }
+            return pattern;
+        }
+    }
+
+    // Full House OR Three of a kind OR one pair
+    bool hasThree = false;
+    int three_value = -1;
+    for (i = 0; i < size-2; i++)
+    {
+        if (c[i].rankidx == c[i+1].rankidx && c[i].rankidx == c[i+2].rankidx)
+        {
+            hasThree = true;
+            three_value = c[i].rankidx;
+            for (j = 0; j < 3; j++)
+            {
+                pattern.push_back(c[i+j]);
+            }
+            break;
+        }
+    }
+    if (hasThree) // has three of a kind, find for a pair to get full house
+    {
+        for (i = 0; i < size-1; i++)
+        {
+            if (c[i].rankidx == c[i+1].rankidx && c[i+1].rankidx != three_value)
+            {
+                rank = 6;
+                pattern.push_back(c[i]);
+                pattern.push_back(c[i+1]);
+                return pattern;
+            }
+        }
+        rank = 3;
+    }
+    else // find for a pair or two pairs
+    {  
+        int pair_count = 0;
+        for (i = 0; i < size-1; i++)
+        {
+            if (c[i].rankidx == c[i+1].rankidx && c[i+1].rankidx != three_value)
+            { 
+                pair_count++;
+                pattern.push_back(c[i]);
+                pattern.push_back(c[i+1]);
+            }
+            if (pair_count == 2)  // break if two pairs are found
+            {
+                break;
+            }
+        }
+        if (pair_count == 2)
+        {
+            rank = 2;
+        }
+        else if (pair_count == 1)
+        {
+            rank = 1;
+        }
+        else 
+        {
+            rank = 0;
+        }
+        return pattern;
+    }
+    // No specific pattern, return the largest card
+    pattern.push_back(c[0]);
+    return pattern;
 }
