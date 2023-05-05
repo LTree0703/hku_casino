@@ -2,17 +2,20 @@
 #include <cstdlib>
 #include <ctime>
 
+#include "func.h"
+
 using namespace std;
 
-void slot_init()
+void slot_init(string &player_name, int &credits)
 {
-cout << "\n===============================================================================================";
-cout << "\nH    H   K    K   U    U  CCCCC      A        SSSSSSSSS   IIIIIIIII  NN     NN    OOOOOOOO     ";
-cout << "\nH    H   K  K     U    U  CC        A  A      SS             III     NN N   NN   OO      OO    ";
-cout << "\nHHHHHH   KKK      U    U  CC       A    A     SSSSSSSSS      III     NN  N  NN   OO      OO    ";
-cout << "\nH    H   K  K     U    U  CC      AAAAAAAA           SS      III     NN   N NN   OO      OO    ";
-cout << "\nH    H   K    K   UUUUUU. CCCCC  A        A   SSSSSSSSS   IIIIIIIII  NN     NN    OOOOOOOO     ";
-cout << "\n===============================================================================================\n";
+    clear();
+    cout << "\n===============================================================================================";
+    cout << "\nH    H   K    K   U    U  CCCCC      A        SSSSSSSSS   IIIIIIIII  NN     NN    OOOOOOOO     ";
+    cout << "\nH    H   K  K     U    U  CC        A  A      SS             III     NN N   NN   OO      OO    ";
+    cout << "\nHHHHHH   KKK      U    U  CC       A    A     SSSSSSSSS      III     NN  N  NN   OO      OO    ";
+    cout << "\nH    H   K  K     U    U  CC      AAAAAAAA           SS      III     NN   N NN   OO      OO    ";
+    cout << "\nH    H   K    K   UUUUUU. CCCCC  A        A   SSSSSSSSS   IIIIIIIII  NN     NN    OOOOOOOO     ";
+    cout << "\n===============================================================================================\n";
 
     srand(time(0)); // seed the random number generator with the current time
 
@@ -20,7 +23,7 @@ cout << "\n=====================================================================
     const int JACKPOT_ODDS = 100; // odds of hitting the jackpot (1 in JACKPOT_ODDS)
 
     char symbols[NUM_SYMBOLS] = {'$', '#', '&', '@', '!', '~', '+'}; // array of symbols
-    int credits = 10; // initial number of credits
+    //int credits = 10; // initial number of credits
     char choice; // player's choice to play again or not
 
     cout << "Welcome to the HKU CASINO Slot Machine!" << endl;
@@ -62,6 +65,7 @@ cout << "\n=====================================================================
     } while (true);
 
     cout << "Thanks for playing the HKU Slot Machine! Goodbye!" << endl;
+    cin.get();
 
     
 }

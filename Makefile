@@ -1,24 +1,27 @@
 FLAG=-std=c++11
 
-casino: main.cpp bank.o func.o menu.o roulette.o slotmachine.o texpoker.o
+casino: main.o func.o roulette.o slotmachine.o texpoker.o
 	g++ $(FLAG) $^ -o $@
 
-bank.o: bank.cpp bank.h
+main.o: main2.cpp roulette.h slotmachine.h texpoker.h
 	g++ $(FLAG) -c $< -o $@
+
+bank.o: bank.cpp bank.h
+	g++ $(FLAG) -c $<
 
 func.o: func.cpp func.h
-	g++ $(FLAG) -c $< -o $@
+	g++ $(FLAG) -c $< 
 
-texpoker.o: texpoker.cpp texpoker.h
-	g++ $(FLAG) -c $< -o $@
+texpoker.o: texpoker.cpp texpoker.h func.h
+	g++ $(FLAG) -c $< 
 
-slotmachine.o: slotmachine.cpp slotmachine.h
-	g++ $(FLAG) -c $< -o $@
+slotmachine.o: slotmachine.cpp slotmachine.h func.h
+	g++ $(FLAG) -c $< 
 
-roulette.o: roulette.cpp roulette.h
-	g++ $(FLAG) -c $< -o $@
+roulette.o: roulette.cpp roulette.h func.h
+	g++ $(FLAG) -c $< 
 
 clean: 
-	rm -rf *.o
+	rm -rf *.o casino
 
 .PHONY: clean

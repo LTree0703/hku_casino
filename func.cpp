@@ -10,7 +10,7 @@ void clear() // clear console output
 
 void read_file(string filename, string &text) // read the file and store it in a string
 {
-    ifstream file(filename);
+    ifstream file(filename.c_str());
     string line;
     while (getline(file, line))
     {

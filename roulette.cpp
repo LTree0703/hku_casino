@@ -3,24 +3,26 @@
 #include <cstdlib> 
 #include <ctime>
 using namespace std;
+
+#include "func.h"
 void rules();
-void roulette_init()
+
+void roulette_init(string &player_name, int &balance)
 {
-    string playerName;
-    int balance; 
+    string playerName = player_name;
     int bettingAmount;
     int guess;
     int dice; 
     char choice;
     srand(time(0)); 
-    cout << "\n\t\t========WELCOME TO CASINO WORLD=======\n\n";
-    cout << "\n\nWhat's your Name : ";
-    getline(cin, playerName);
-    cout << "\n\nEnter the starting balance to play game : $";
-    cin >> balance;
+    //cout << "\n\t\t========WELCOME TO CASINO WORLD=======\n\n";
+    //cout << "\n\nWhat's your Name : ";
+    //getline(cin, playerName);
+    //cout << "\n\nEnter the starting balance to play game : $";
+    //cin >> balance;
     do
     {
-        system("cls");
+        clear();
         rules();
         cout << "\n\nYour current balance is $ " << balance << "\n";
         do
@@ -52,7 +54,7 @@ void roulette_init()
         }
         cout << "\nThe winning number was : " << dice <<"\n";
         cout << "\n"<<playerName<<", You have balance of $ " << balance << "\n";
-        if(balance == 0)
+        if(balance <= 0)
         {
             cout << "You have no money to play ";
             break;

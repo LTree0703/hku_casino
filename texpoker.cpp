@@ -34,11 +34,11 @@ struct Player {
 
 class Texas {
 public:
-    Texas();
+    Texas(string &player_name, int &balance);
     Card draw_card();
     void print_table(int phase);
     void bet(string choice, int playeridx, int &bet); // returns an integer indicating the minimum number of chip required for call
-    void game_flow();
+    int game_flow();
     int get_winner(); // returns an integer indicating the index of the winner in the array players[]
     vector<Card> get_pattern(int player_id, int &rank);
 
@@ -58,7 +58,7 @@ bool operator > (const Card &a, const Card &b)
     return (a.suitidx > b.suitidx);
 }
 
-Texas::Texas()
+Texas::Texas(string &player_name, int &balance)
 {
     pot = 0;
 
@@ -66,9 +66,16 @@ Texas::Texas()
     fill(cards, cards+CARD_NUM, 0);
 
     for (int i = 0; i < PLAYER_NUM; i++)
-    {
-        players[i].name = "Player " + to_string(i);
-        players[i].chips = rand() % 50 + 20;
+    {   if (i == 0)
+        {
+            players[i].name = player_name;
+            players[i].chips = balance;
+        }
+        else
+        {
+            players[i].name = "Player " + to_string(i);
+            players[i].chips = rand() % 50 + 20;
+        }
         players[i].hasFolded = false;
         players[i].hole_card[0] = draw_card();
         players[i].hole_card[1] = draw_card();
@@ -251,7 +258,7 @@ void Texas::bet(string choice, int playeridx, int &minimum_bet)
     }
 }
 
-void Texas::game_flow()
+int Texas::game_flow()
 {
     int phase, minimum_bet = 1;
     for (phase = 0; phase < 3; phase++)
@@ -321,6 +328,8 @@ void Texas::game_flow()
     sleep(1);
     cout << players[winner].name << " + " << pot << " chips" << endl;
     players[winner].chips += pot;
+    
+    return players[0].chips;
 }
 
 // int get_pattern_rank(int suit[7], int rank[7])
@@ -457,20 +466,9 @@ int Texas::get_winner()
         if (players[i].hasFolded)
             continue;
 
-        // store the data from the community cards & players
-        // for (int j = 0; j < 5; j++)
-        // {
-        //     rank[j] = community_cards[j].rankidx;
-        //     suit[j] = community_cards[j].suitidx;
-        // }
-        // for (int j = 0; j < 2; j++)
-        // {
-        //     rank[5+j] = players[i].hole_card[j].rankidx;
-        //     suit[5+j] = players[i].hole_card[j].suitidx;
-        // }
         int current_rank = 0;
         cout << players[i].name << " got: ";
-        // int current_rank = get_pattern_rank(suit, rank);
+
         vector<Card> c = get_pattern(i, current_rank);
 
         switch(current_rank)
@@ -504,17 +502,6 @@ int Texas::get_winner()
                 break;
         }
         cout << endl;
-        // cout << "current rank: " << current_rank << endl;
-        // for (int j = 0; j < c.size(); j++)
-        // {
-        //     cout << c[j].rankidx << " ";
-        // }
-        // cout << endl;
-        // for (int j = 0; j < c.size(); j++)
-        // {
-        //     cout << c[j].suitidx << " "; 
-        // }
-        // cout << endl;
 
         if (current_rank > highest_rank)
         {
@@ -531,7 +518,6 @@ int Texas::get_winner()
             }
         }
     }
-    // delete[] rank; delete[] suit;
     return highest_rank_player;
 }
 
@@ -713,9 +699,9 @@ vector<Card> Texas::get_pattern(int player_id, int &rank)
     return pattern;
 }
 
-bool game_round();
+bool game_round(string &player_name, int &balance);
 
-void texpoker_init()
+void texpoker_init(string &player_name, int &balance)
 {
     clear();
     // set seed value for generating random numbers
@@ -728,7 +714,6 @@ void texpoker_init()
     cout << R"( \/   \___/_/\_\__,_|___/ \/    \___/|_|\_\___|_|   )" << endl;
     cout << "\nWelcome to Texas Poker:)" << endl;
     cout << "Press \033[2menter\033[0m to continue...";
-    cin.ignore(1024, '\n');
     cin.get();
     clear();
 
@@ -736,7 +721,7 @@ void texpoker_init()
     while (1)
     {
         cout << "\n\033[1;34mGetting ready for round: " << round_count << "\033[0m" << endl;
-        if (!game_round()) // return true if continue, false otherwise
+        if (!game_round(player_name, balance)) // return true if continue, false otherwise
         {
             break;
         }
@@ -747,17 +732,17 @@ void texpoker_init()
     }
 }
 
-bool game_round()
+bool game_round(string &player_name, int &balance)
 {
-    Texas *dealer = new Texas;
+    Texas *dealer = new Texas(player_name, balance);
     cout << "Shuffling the cards and dealing..." << endl;
     sleep(1);
 
-    dealer->game_flow();
-
+    balance = dealer->game_flow();
+    
     delete dealer;
     string choice;
-    cout << "Continue playing? (Y/N) ";
+    cout << "Do you want to play again? (y/n) ";
     while (1)
     {
         cin >> choice;

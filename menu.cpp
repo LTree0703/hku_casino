@@ -11,16 +11,11 @@ void displayMenu() {
     cout << "Enter the number corresponding to your choice: ";
 }
 
-void restartGame() {
-    // Code to restart the game
-    cout << "Restarting the game..." << endl;
-}
-
 void exitGame() {
     cout << "Exiting the game..." << endl;
 }
 
-bool validateCredentials(const std::string& username, const std::string& password) {
+bool validateCredentials(const string& username, const string& password) {
     // Replace these hardcoded values with your desired account name and password
     const string validUsername = "player";
     const string validPassword = "password";

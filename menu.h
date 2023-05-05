@@ -4,7 +4,7 @@
 #include <iostream>
 
 void displayMenu();
-void restartGame();
 void exitGame();
+bool login();
 
 #endif // MENU_HPP

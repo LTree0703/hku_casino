@@ -21,4 +21,6 @@
 *.s
 *.i
 
+data.txt
+
 .vscode/
