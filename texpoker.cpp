@@ -247,8 +247,22 @@ void Texas::bet(string choice, int playeridx, int &minimum_bet)
     }
     else if (choice == "man")
     {
-        system("man ./texrule");
-        cout << "Choose your bet: ";
+        clear();
+        string line;
+        ifstream man("texa_rule.txt");
+        while (getline(man, line))
+            cout << line << endl;
+        cout << "Press enter to continue...";
+        cin.get(); cin.get();
+        clear();
+        print_table(0);
+        cout << "(1) call" << endl;
+        cout << "(2) raise" << endl;
+        cout << "(3) check" << endl;
+        cout << "(4) fold" << endl;
+        cout << "(5) all-in" << endl;
+        cout << "(Type 'man' for game rules)" << endl;
+        cout << "Choose your bet: (You have " << players[0].chips << " chips) ";
         cin >> choice;
         bet(choice, playeridx, minimum_bet);
     }
