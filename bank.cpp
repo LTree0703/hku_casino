@@ -2,6 +2,7 @@
 
 using namespace std;
 
+// Display Bank system in terminal
 void bankMenu() {
     system("CLS");
     cout << "Bank Options:" << endl;
@@ -10,6 +11,7 @@ void bankMenu() {
     cout << "Enter the number corresponding to your choice: ";
 }
 
+// Deposit chips into bank
 void deposit(double &balance) {
     double amount;
     cout << "Enter the amount to deposit: ";
@@ -23,6 +25,7 @@ void deposit(double &balance) {
     }
 }
 
+// Withdraw chips from bank
 void withdraw(double &balance) {
     double amount;
     cout << "Enter the amount to withdraw: ";
