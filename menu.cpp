@@ -4,6 +4,9 @@ using namespace std;
 
 void displayMenu() {
     system("CLS");
+    cout << " - - - - - - - - - -" << endl;
+    cout << " H K U C A S I N O " << endl;
+    cout << " - - - - - - - - - -" << endl;
     cout << "Menu Options:" << endl;
     cout << "1. Restart Game" << endl;
     cout << "2. Bank" << endl;
