@@ -56,7 +56,7 @@ void slot_init(string &player_name, int &credits)
         }
 
         // check if player wants to play again
-        cout << "Do you want to play again? (y/n)";
+        cout << "Do you want to play again? (y/n) ";
         cin >> choice;
         if (choice == 'n') {
             break;

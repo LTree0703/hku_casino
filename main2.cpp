@@ -55,6 +55,7 @@ void game_init()
         cout << "An error occurred, please try again." << endl;
         return;
     }
+
     while (getline(fin, line))
     {
         line_count++;
@@ -70,6 +71,7 @@ void game_init()
     string input;
     while (true)
     {
+        clear();
         cout << menu << endl;
         cout << "Please choose an option... ";
         getline(cin, input);
@@ -89,7 +91,8 @@ void game_init()
             setup_player();
             break;
         }
-        cout << "Invalid output, please try again." << endl;
+        cout << "Invalid output, please try again.";
+        cin.get();
     }
     game_menu();
 }
@@ -113,7 +116,7 @@ void game_menu()
             cout << "Exiting Game..." << endl;
             return;
         }
-        fin >> player_name;
+        getline(fin, player_name);
         fin >> chips;
         fin.close();
 
@@ -131,6 +134,14 @@ void game_menu()
         }
         fin.close();
         cout << "Hello, " << player_name << ". You currently have " << chips << " chips." << endl;
+        if (chips <= 0)
+        {
+            cout << "You have no chips now. You have to create a new user profile again.";
+            cin.get();
+            remove("data.txt"); // delete original file
+            game_init();
+            return;
+        }
         cout << "Which game do you want to play? ";
         // wait for choice 
         string choice;
@@ -150,10 +161,12 @@ void game_menu()
         else if (choice == "4")
         {
             game_init();
+            return;
         }
         else
         {
             cout << "Invalid input, please try again." << endl;
+            cin.get();
         }
         alter_value(player_name, chips);
     }

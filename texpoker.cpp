@@ -69,7 +69,7 @@ Texas::Texas(string &player_name, int &balance)
         else
         {
             players[i].name = "Player " + to_string(i);
-            players[i].chips = rand() % 50 + 20;
+            players[i].chips = rand() % balance + 30;
         }
         players[i].hasFolded = false;
         players[i].hole_card[0] = draw_card();
@@ -330,7 +330,11 @@ int Texas::game_flow()
                 players[i].chips -= minimum_bet;
                 pot += minimum_bet;
             }
-            else 
+            else if (players[0].chips == 0)
+            {
+                players[i].hasFolded = false;
+            }
+            else
             {
                 players[i].hasFolded = true;
             }
@@ -639,6 +643,13 @@ bool game_round(string &player_name, int &balance)
     
     delete dealer;
     string choice;
+    if (balance <= 0)
+    {
+        cout << "Sorry but you have no chips now..." << endl;
+        cout << "Press enter to return to menu...";
+        cin.get(); cin.get();
+        return false;
+    }
     cout << "Do you want to play again? (y/n) ";
     while (1)
     {
