@@ -5,7 +5,7 @@ An ENGG1340/COMP2113 (2022/2023 Semester 2) project
 ## Contributors
 Chong Chak Yu 3035691602 (Game Menu and Bank system)
 ## About Our Game
-
+It is a collection of three mini casino games, including slot machine, roulette and text poker. Also this game simulated the bank system where the players can withdraw or deposit an amount of chips.
 ## Game Features
 1. Generation of random game sets or events
 
