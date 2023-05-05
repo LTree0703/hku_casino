@@ -2,6 +2,7 @@
 
 using namespace std;
 
+// Display Game Menu
 void displayMenu() {
     system("CLS");
     cout << "      - - - - - - - - - -" << endl;
@@ -14,10 +15,12 @@ void displayMenu() {
     cout << "Enter the number corresponding to your choice: ";
 }
 
+//Remind players' choice of exiting game
 void exitGame() {
     cout << "Exiting the game..." << endl;
 }
 
+//Check whether players have successfully entered correct usenames and passwords
 bool validateCredentials(const string& username, const string& password) {
     // Replace these hardcoded values with your desired account name and password
     const string validUsername = "player";
@@ -26,6 +29,7 @@ bool validateCredentials(const string& username, const string& password) {
     return (username == validUsername && password == validPassword);
 }
 
+//Login by entering username and password and then check for correctness
 bool login() {
     string username, password;
 
