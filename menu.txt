@@ -3,7 +3,7 @@
 |                                                    |
 |                                                    |
 |                                                    |
-|                  Start Game   (1)                  |   
+|                  Start Game   (1)                  |
 |                  Quit         (2)                  |
 |                                                    |
 |                                                    |
