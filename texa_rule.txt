@@ -2,24 +2,26 @@
                     The rules of Texas Hold'em
 1. You, will always be the blind
 
-2. At the beginning of the game, you bet the chips first
+2. Each player will be dealt two cards
 
-3. Each player will be dealt two cards
+3. After dealing the bottom card,you bet the choice first （the four choices）: 
+You can choose a.call 2.raise(with amount) 3.check 4.fold 5.all-in
+proceed to step 
 
-4. After dealing the bottom card, proceed to step 5 (all blinds, calls will go into the pot)
-You can choose a.Fold c.All-in c.Raise(with amount) d. Check
+4. Since this is a single player game
+a. If you choose Raise (with amount) ,npcs will call when the they have enough chips, and fold if they don't have enough chips.
+b. If you choose All-in, npcs WILL Neither call Nor All-in.As it is a high risk choice for npcs. The winner will be announced directly.
+c. If you choose to fold, then the winner(s) will be announced directly
+d. If you choose to check, then nps also check.
+e. If you choose to call,a fxied amount of 1 chips will be raised,npcs will call when the they have enough chips, and fold if they don't have enough chips.
 
-6. Since this is a single player game
-a . If you choose Raise (with amount) ,npcs will call when the they have enough chips, and fold if they don't have enough chips.
-b. If you choose All-in, npcs will also choose All-in.
-c. If you choose to fold, then the winner will be announced directly
-d. If you choose to check, then nps also check
+5. all blinds, calls (chips) will go into the pot
 
-7. Turn over the three public cards and repeat step 5 (Flop)
+6. Turn over the three public cards and repeat step 5 (Flop)
 
-8. Turn over the fourth public card and repeat step 5 (Turn)
+7. Turn over the fourth public card and repeat step 5 (Turn)
 
-9. Turn over the last public card(River), announce the winner, and the winner takes all the accumulated chips in the pot (if there is an extra winner, the chips are divided equally) 
+8. Turn over the last public card(River), announce the winner, and the winner takes all the accumulated chips in the pot (if there is an extra winner, the chips are divided equally) 
 
 
 
