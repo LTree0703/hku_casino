@@ -10,7 +10,7 @@ proceed to step
 
 4. Since this is a single player game
 a. If you choose Raise (with amount) ,npcs will call when the they have enough chips, and fold if they don't have enough chips.
-b. If you choose All-in, npcs will also choose All-in.The winner(s) will be announced directly.
+b. If you choose All-in, npcs WILL Neither call Nor All-in.As it is a high risk choice for npcs. The winner will be announced directly.
 c. If you choose to fold, then the winner(s) will be announced directly
 d. If you choose to check, then nps also check.
 e. If you choose to call,a fxied amount of 1 chips will be raised,npcs will call when the they have enough chips, and fold if they don't have enough chips.
