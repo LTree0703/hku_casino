@@ -3,7 +3,7 @@
 An ENGG1340/COMP2113 (2022/2023 Semester 2) project
 
 ## Contributors
-
+Chong Chak Yu 3035691602 (Game Menu and Bank system)
 ## About Our Game
 
 ## Game Features
