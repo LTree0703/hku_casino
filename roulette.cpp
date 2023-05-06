@@ -13,7 +13,7 @@ void roulette_init(string &player_name, int &balance)
     int bettingAmount;
     int guess;
     int dice; 
-    char choice;
+    string choice;
     srand(time(0)); 
     //cout << "\n\t\t========WELCOME TO CASINO WORLD=======\n\n";
     //cout << "\n\nWhat's your Name : ";
@@ -27,7 +27,7 @@ void roulette_init(string &player_name, int &balance)
         cout << "\n\nYour current balance is $ " << balance << "\n";
         do
         {
-            cout << "Hey, " << playerName<<", enter amount to bet : $";
+            cout << "Hey, " << playerName <<", enter amount to bet : $";
             cin >> bettingAmount;
             if(bettingAmount > balance)
                 cout << "Betting balance can't be more than current balance!\n"
@@ -61,7 +61,7 @@ void roulette_init(string &player_name, int &balance)
         }
         cout << "\n\n-->Do you want to play again (y/n)? ";
         cin >> choice;
-    }while(choice =='Y'|| choice=='y');
+    }while(choice =="Y"|| choice=="y");
     cout << "\n\n\n";
     cout << "\n\nThanks for playing the game. Your balance is $ " << balance << "\n\n";
     

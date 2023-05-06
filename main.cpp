@@ -145,7 +145,7 @@ void game_menu()
         cout << "Which game do you want to play? ";
         // wait for choice 
         string choice;
-        getline(cin, choice);
+        cin >> choice;
         if (choice == "1")
         {
             roulette_init(player_name, chips);
@@ -162,11 +162,6 @@ void game_menu()
         {
             game_init();
             return;
-        }
-        else
-        {
-            cout << "Invalid input, please try again." << endl;
-            cin.get();
         }
         alter_value(player_name, chips);
     }
