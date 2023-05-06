@@ -1,10 +1,10 @@
 FLAG=-std=c++11
 
 casino: main.o func.o roulette.o slotmachine.o texpoker.o
-	g++ $(FLAG) $^
+	g++ $(FLAG) $^ -o $@
 
 main.o: main.cpp roulette.h slotmachine.h texpoker.h
-	g++ $(FLAG) -c $< -o $@
+	g++ $(FLAG) -c $<
 
 func.o: func.cpp func.h
 	g++ $(FLAG) -c $< 
