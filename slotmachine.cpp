@@ -18,7 +18,7 @@ void slot_init(string &player_name, int &credits)
     cout << "\nH    H   K    K   UUUUUU. CCCCC  A        A   SSSSSSSSS   IIIIIIIII  NN     NN    OOOOOOOO     ";
     cout << "\n===============================================================================================\n";
 
-    srand(time(0)); // seed the random number generator with the current time
+    srand((unsigned) time(NULL)); // seed the random number generator with the current time
 
     const int NUM_SYMBOLS = 7; // number of symbols in the slot machine
     const int JACKPOT_ODDS = 100; // odds of hitting the jackpot (1 in JACKPOT_ODDS)
@@ -66,7 +66,7 @@ void slot_init(string &player_name, int &credits)
 
     } while (true);
 
-    cout << "Thanks for playing the HKU Slot Machine! Goodbye!" << endl;
+    cout << "Thanks for playing the Slot Machine! Goodbye!";
     cin.get();
 
     

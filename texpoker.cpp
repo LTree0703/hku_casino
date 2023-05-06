@@ -56,7 +56,6 @@ bool operator > (const Card &a, const Card &b)
 Texas::Texas(string &player_name, int &balance)
 {
     pot = 0;
-
     // initialize the card deck: 0 = not drawn; 1 = drawn
     fill(cards, cards+CARD_NUM, 0);
 
