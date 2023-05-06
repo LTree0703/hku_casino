@@ -615,7 +615,7 @@ void texpoker_init(string &player_name, int &balance)
     cout << R"( \/   \___/_/\_\__,_|___/ \/    \___/|_|\_\___|_|   )" << endl;
     cout << "\nWelcome to Texas Poker:)" << endl;
     cout << "Press \033[2menter\033[0m to continue...";
-    cin.get();
+    cin.get(); cin.get();
     clear();
 
     int round_count = 1;

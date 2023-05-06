@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <string>
 
 #include "func.h"
 
@@ -24,13 +25,14 @@ void slot_init(string &player_name, int &credits)
 
     char symbols[NUM_SYMBOLS] = {'$', '#', '&', '@', '!', '~', '+'}; // array of symbols
     //int credits = 10; // initial number of credits
-    char choice; // player's choice to play again or not
+    string choice; // player's choice to play again or not
 
     cout << "Welcome to the HKU CASINO Slot Machine!" << endl;
 
     do {
         cout << "You have " << credits << " credits. ";
         cout << "Press enter to spin the wheel";
+        cin.get();
         cin.ignore(); // wait for player to press Enter
 
         char reel1 = symbols[rand() % NUM_SYMBOLS]; // spin the reels
@@ -58,7 +60,7 @@ void slot_init(string &player_name, int &credits)
         // check if player wants to play again
         cout << "Do you want to play again? (y/n) ";
         cin >> choice;
-        if (choice == 'n') {
+        if (choice == "n") {
             break;
         }
 

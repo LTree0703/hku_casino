@@ -5,8 +5,6 @@
 #include <string>
 
 #include "func.h"
-#include "menu.h"
-#include "bank.h"
 #include "roulette.h"
 #include "texpoker.h"
 #include "slotmachine.h"
@@ -91,8 +89,6 @@ void game_init()
             setup_player();
             break;
         }
-        cout << "Invalid output, please try again.";
-        cin.get();
     }
     game_menu();
 }
