@@ -14,9 +14,9 @@ k-kwong - Kwong Tsz Kong 3035924126 (`texa_rule.txt`, `texpoker.cpp` and `main.c
 
 LTree0703 - Pang Tin Hei 3036100179 (`texpoker.cpp` and `main.cpp`)
 
-jaimielee14 - Lee Jaimie (`slotmachine.cpp`)
+jaimielee14 - Lee Jaimie 3035855179 (`slotmachine.cpp`)
 
-dawon92 - Chung Dawon (`roulette.cpp`)
+dawon92 - Chung Dawon 3036085989 (`roulette.cpp`)
 
 ## Game Description
 
